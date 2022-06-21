@@ -28,11 +28,12 @@ class RemoteConfigs {
 
   factory RemoteConfigs.fromJson(dynamic json) {
     if (json is List<dynamic> || json is YamlList) {
+      final list =
+          // ignore: avoid_dynamic_calls
+          json.map((e) => RemoteConfig.fromJson(e)).toList() as List<dynamic>;
+
       return RemoteConfigs(
-        configs: json
-            .map((e) => RemoteConfig.fromJson(e))
-            .toList()
-            .cast<RemoteConfig>(),
+        configs: list.cast<RemoteConfig>(),
       );
     }
     throw RemoteConfigParserException("Unknown type in fromJson: $json");
@@ -74,8 +75,7 @@ class RemoteConfig {
   }
 }
 
-int? _durationToJson(Duration? duration) =>
-    duration == null ? null : duration.inSeconds;
+int? _durationToJson(Duration? duration) => duration?.inSeconds;
 
 Duration? _durationFromJson(int? seconds) =>
     seconds == null ? null : Duration(seconds: seconds);

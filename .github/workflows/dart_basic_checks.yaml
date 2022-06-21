@@ -1,0 +1,37 @@
+name: Basic checks
+
+env:
+  DART_VERSION: '2.17.0'
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  Basic-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: dart-lang/setup-dart@v1.3
+        with:
+          sdk: $DART_VERSION
+
+      - name: Run build_runner
+        run: |
+          dart pub get
+          dart run build_runner build --delete-conflicting-outputs
+
+      - name: Dart format
+        run: |
+          dart format ./ --set-exit-if-changed
+      - name: Dart Analyze
+        run: |
+          dart analyze
+      - name: Run Tests
+        run: |
+          dart test

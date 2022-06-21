@@ -51,16 +51,20 @@ void main() {
     final res = await FileRemoteConfigFetcher('test/wrong_type.yaml').fetch();
 
     expect(res, isA<RemoteConfigResponseFailure>());
-    expect((res as RemoteConfigResponseFailure).message,
-        'type \'String\' is not a subtype of type \'bool?\' in type cast');
+    expect(
+      (res as RemoteConfigResponseFailure).message,
+      "type 'String' is not a subtype of type 'bool?' in type cast",
+    );
   });
 
   test('No content in a remoteConfig should be detected.', () async {
     final res = await FileRemoteConfigFetcher('test/no_content.yaml').fetch();
 
     expect(res, isA<RemoteConfigResponseFailure>());
-    expect((res as RemoteConfigResponseFailure).message,
-        'RemoteConfigParserException: Unknown type in fromJson: null');
+    expect(
+      (res as RemoteConfigResponseFailure).message,
+      'RemoteConfigParserException: Unknown type in fromJson: null',
+    );
   });
 
   test('Wrong Date should be detected.', () async {
@@ -68,9 +72,10 @@ void main() {
 
     expect(res, isA<RemoteConfigResponseFailure>());
     expect(
-        (res as RemoteConfigResponseFailure).message,
-        'FormatException: Invalid date format\n'
-        '2025.06.16 20:20:39');
+      (res as RemoteConfigResponseFailure).message,
+      'FormatException: Invalid date format\n'
+      '2025.06.16 20:20:39',
+    );
   });
 
   test('Wrong Date should be detected.', () async {
@@ -78,7 +83,9 @@ void main() {
         await FileRemoteConfigFetcher('test/wrong_version.yaml').fetch();
 
     expect(res, isA<RemoteConfigResponseFailure>());
-    expect((res as RemoteConfigResponseFailure).message,
-        'FormatException: Could not parse version "bla". Unknown text at "bla".');
+    expect(
+      (res as RemoteConfigResponseFailure).message,
+      'FormatException: Could not parse version "bla". Unknown text at "bla".',
+    );
   });
 }

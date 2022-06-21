@@ -18,8 +18,10 @@ class FileRemoteConfigFetcher extends RemoteConfigFetcher
   final String filePath;
   final RemoteConfigParser parser;
 
-  FileRemoteConfigFetcher(this.filePath,
-      {this.parser = const RemoteConfigParser()});
+  FileRemoteConfigFetcher(
+    this.filePath, {
+    this.parser = const RemoteConfigParser(),
+  });
 
   @override
   Future<RemoteConfigResponse> fetch() async {
@@ -61,11 +63,12 @@ class S3RemoteConfigFetcher extends RemoteConfigFetcher
   final String bucketName;
   final RemoteConfigParser parser;
 
-  S3RemoteConfigFetcher(
-      {required this.s3Factory,
-      required this.nameBuilder,
-      required this.bucketName,
-      this.parser = const RemoteConfigParser()});
+  S3RemoteConfigFetcher({
+    required this.s3Factory,
+    required this.nameBuilder,
+    required this.bucketName,
+    this.parser = const RemoteConfigParser(),
+  });
 
   @override
   Future<RemoteConfigResponse> fetch() async {
@@ -81,7 +84,9 @@ class S3RemoteConfigFetcher extends RemoteConfigFetcher
       return fromYamlStringContent(content, parser);
     } on GenericAwsException catch (e) {
       return RemoteConfigResponse.failure(
-          error: RemoteConfigResponseError.errorNoDataFetched, message: e.code);
+        error: RemoteConfigResponseError.errorNoDataFetched,
+        message: e.code,
+      );
     }
   }
 }
@@ -89,19 +94,23 @@ class S3RemoteConfigFetcher extends RemoteConfigFetcher
 mixin RemoteConfigFetcherBase {
   @protected
   RemoteConfigResponse fromYamlStringContent(
-      String content, RemoteConfigParser parser) {
+    String content,
+    RemoteConfigParser parser,
+  ) {
     if (content.isNotEmpty) {
       try {
         final config = parser.parse(content);
         return RemoteConfigResponse.success(config);
       } catch (e) {
         return RemoteConfigResponse.failure(
-            error: RemoteConfigResponseError.errorWhileParsing,
-            message: e.toString());
+          error: RemoteConfigResponseError.errorWhileParsing,
+          message: e.toString(),
+        );
       }
     } else {
-      return RemoteConfigResponse.failure(
-          error: RemoteConfigResponseError.errorNoData);
+      return const RemoteConfigResponse.failure(
+        error: RemoteConfigResponseError.errorNoData,
+      );
     }
   }
 }

@@ -12,7 +12,8 @@ enum RemoteConfigResponseError {
 @freezed
 class RemoteConfigResponse with _$RemoteConfigResponse {
   const factory RemoteConfigResponse.success(
-      final RemoteConfigs remoteConfigs) = RemoteConfigResponseSuccess;
+    final RemoteConfigs remoteConfigs,
+  ) = RemoteConfigResponseSuccess;
 
   const factory RemoteConfigResponse.failure({
     required RemoteConfigResponseError error,
