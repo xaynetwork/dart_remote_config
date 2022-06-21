@@ -1,0 +1,10 @@
+# is not a valid schema
+
+- appVersion: ">3.33.0 <4.0.0"
+  promoCodes:
+    # legacy codes
+    - code: "TEST"
+      grantedSku: null
+      enabled: test
+      expiresOn: "2025-06-16 20:20:39"
+      grandtedDuration: 120

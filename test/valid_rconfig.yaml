@@ -1,0 +1,19 @@
+# q: $schema=../assets/remote_config_schema_v1.json
+
+- appVersion: ">3.33.0 <4.0.0"
+  promoCodes:
+    # legacy codes
+    - code: "TEST"
+      grantedSku: "unlimited"
+      enabled: false
+      expiresOn: "2025-06-16 20:20:39"
+      grandtedDuration: 120
+
+    # already expired
+    - code: "TEST2"
+      grantedSku: "unlimited"
+      enabled: true
+      expiresOn: "2021-01-01 20:20:39"
+
+    - code: "WE NEED MORE CODES"
+      grantedSku: "test"
