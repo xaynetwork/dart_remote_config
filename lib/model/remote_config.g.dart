@@ -12,28 +12,20 @@ RemoteConfig _$RemoteConfigFromJson(Map<String, dynamic> json) => RemoteConfig(
               ?.map((e) => PromoCode.fromJson(e))
               .toList() ??
           const [],
+      features: (json['features'] as List<dynamic>?)
+              ?.map((e) => Feature.fromJson(e))
+              .toList() ??
+          const [],
+      experiments: (json['experiments'] as List<dynamic>?)
+              ?.map((e) => Experiment.fromJson(e))
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$RemoteConfigToJson(RemoteConfig instance) =>
     <String, dynamic>{
       'appVersion': _versionConstraintToJson(instance.appVersion),
       'promoCodes': instance.promoCodes,
-    };
-
-PromoCode _$PromoCodeFromJson(Map<String, dynamic> json) => PromoCode(
-      code: json['code'] as String,
-      grantedDuration: _durationFromJson(json['grantedDuration'] as int?),
-      grantedSku: json['grantedSku'] as String?,
-      enabled: json['enabled'] as bool? ?? true,
-      expiresOn: json['expiresOn'] == null
-          ? null
-          : DateTime.parse(json['expiresOn'] as String),
-    );
-
-Map<String, dynamic> _$PromoCodeToJson(PromoCode instance) => <String, dynamic>{
-      'code': instance.code,
-      'grantedSku': instance.grantedSku,
-      'grantedDuration': _durationToJson(instance.grantedDuration),
-      'enabled': instance.enabled,
-      'expiresOn': instance.expiresOn?.toIso8601String(),
+      'features': instance.features,
+      'experiments': instance.experiments,
     };
