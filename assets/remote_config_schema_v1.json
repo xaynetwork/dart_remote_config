@@ -1,81 +1,86 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema",
-    "$id": "TODO: https://example.com/product.schema.json",
-    "title": "Remote Config",
-    "definitions": {
-        "version": {
-            "type": "string",
-            "pattern": "^\\d+\\.\\d+\\.\\d+(?:[+-]\\S+)?$"
-        },
-        "versionConstraint": {
-            "description": "Version range of the package or SDK to use",
-            "oneOf": [
-                {
-                    "$ref": "#/definitions/version"
-                },
-                {
-                    "type": "string",
-                    "examples": [
-                        ">3.33.0 <4.0.0",
-                        ">=1.0.0-pre.1 <=3.0.0"
-                    ],
-                    "pattern": "^(?:(?:>=|>|<=|<)\\d+\\.\\d+\\.\\d+(?:[+-]\\S+)?\\s*)+$"
-                }
-            ]
-        },
-        "promoCode": {
-            "description": "A promotianal code",
-            "type": "object",
-            "required": ["code", "grantedSku"],
-            "properties": {
-                "code" : {
-                    "type" : "string",
-                    "minLength": 3
-                },
-                "grantedSku" : {
-                    "description": "The SKU identifier in App / Play In App Purchase / Subscription that will be granted",
-                    "type" : "string",
-                    "minLength": 3
-                },
-                "grantedDuration" : {
-                    "description": "A duration in seconds",
-                    "type" : "integer"
-                },
-                "enabled": {
-                    "description": "If this code is still valid",
-                    "type": "boolean",
-                    "default": "true"
-                },
-                "expiresOn": {
-                    "examples": ["2022-06-16 20:20:39"],
-                    "type": "string",
-                    "pattern": "^(\\d{4}-(?:[01][0-2]|0\\d){1}-[0-3]\\d{1} [0-6]\\d{1}:[0-6]\\d{1}:[0-6]\\d{1})$"
-                }
-            }
-        }
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "TODO: https://example.com/product.schema.json",
+  "title": "Remote Config",
+  "definitions": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(?:[+-]\\S+)?$"
     },
-    "type": "array",
-    "minItems": 1,
-    "uniqueItems": true,
-    "items": {
-        "description": "A static remote configuration for client applications.",
-        "type": "object",
-        "required": [
-            "appVersion"
-        ],
-        "properties": {
-            "appVersion": {
-                "$ref": "#/definitions/versionConstraint"
-            },
-            "promoCodes": {
-                "description": "Promotianal Codes to enable some functionality",
-                "type": "array",
-                "items": {
-                    "$ref": "#/definitions/promoCode"
-                },
-                "minItems": 1,
-                "uniqueItems": true
-            }
+    "versionConstraint": {
+      "description": "Version range of the package or SDK to use",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/version"
+        },
+        {
+          "type": "string",
+          "examples": [
+            ">3.33.0 <4.0.0",
+            ">=1.0.0-pre.1 <=3.0.0"
+          ],
+          "pattern": "^(?:(?:>=|>|<=|<)\\d+\\.\\d+\\.\\d+(?:[+-]\\S+)?\\s*)+$"
         }
+      ]
+    },
+    "promoCode": {
+      "description": "A promotianal code",
+      "type": "object",
+      "required": [
+        "code",
+        "grantedSku"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "minLength": 3
+        },
+        "grantedSku": {
+          "description": "The SKU identifier in App / Play In App Purchase / Subscription that will be granted",
+          "type": "string",
+          "minLength": 3
+        },
+        "grantedDuration": {
+          "description": "A duration in seconds",
+          "type": "integer"
+        },
+        "enabled": {
+          "description": "If this code is still valid",
+          "type": "boolean",
+          "default": "true"
+        },
+        "expiresOn": {
+          "examples": [
+            "2022-06-16 20:20:39"
+          ],
+          "type": "string",
+          "pattern": "^(\\d{4}-(?:[01][0-2]|0\\d){1}-[0-3]\\d{1} [0-6]\\d{1}:[0-6]\\d{1}:[0-6]\\d{1})$"
+        }
+      }
     }
+  },
+  "type": "array",
+  "minItems": 1,
+  "uniqueItems": true,
+  "items": {
+    "description": "A static remote configuration for client applications.",
+    "type": "object",
+    "required": [
+      "appVersion"
+    ],
+    "properties": {
+      "appVersion": {
+        "$ref": "#/definitions/versionConstraint"
+      },
+      "promoCodes": {
+        "description": "Promotianal Codes to enable some functionality",
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/promoCode"
+        },
+        "minItems": 1,
+        "uniqueItems": true
+      }
+    }
+  }
 }
