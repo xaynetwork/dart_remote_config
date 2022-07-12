@@ -5,14 +5,29 @@ import 'package:yaml/yaml.dart';
 
 part 'experiment.g.dart';
 
+double _validRatio(double size) {
+  if (size < 0) {
+    return 0;
+  } else if (size > 1) {
+    return 1;
+  } else {
+    return size;
+  }
+}
+
 @JsonSerializable()
 class Experiment {
   final String id;
+
+  @JsonKey(defaultValue: true)
   final bool enabled;
+
+  @JsonKey(defaultValue: true)
   final bool exclusive;
+
   final List<Variant> variants;
 
-  /// TODO: Add validation that size is between 0 and 1
+  @JsonKey(toJson: _validRatio, fromJson: _validRatio)
   final double size;
 
   Experiment({
@@ -30,7 +45,8 @@ class Experiment {
       return _$ExperimentFromJson(json.cast());
     }
     throw RemoteConfigParserException(
-        "Experiment: Unknown type in fromJson: $json");
+      "Experiment: Unknown type in fromJson: $json",
+    );
   }
 
   Map<String, dynamic> toJson() => _$ExperimentToJson(this);

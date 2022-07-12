@@ -8,7 +8,7 @@ part of 'experiment.dart';
 
 Experiment _$ExperimentFromJson(Map<String, dynamic> json) => Experiment(
       id: json['id'] as String,
-      size: (json['size'] as num).toDouble(),
+      size: _validRatio(json['size'] as double),
       variants: (json['variants'] as List<dynamic>)
           .map((e) => Variant.fromJson(e))
           .toList(),
@@ -22,5 +22,5 @@ Map<String, dynamic> _$ExperimentToJson(Experiment instance) =>
       'enabled': instance.enabled,
       'exclusive': instance.exclusive,
       'variants': instance.variants,
-      'size': instance.size,
+      'size': _validRatio(instance.size),
     };
