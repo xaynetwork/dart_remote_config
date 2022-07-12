@@ -4,7 +4,7 @@ import 'dart:typed_data';
 
 import 'package:aws_s3_api/s3-2006-03-01.dart';
 import 'package:dart_remote_config/model/remote_config.dart';
-import 'package:dart_remote_config/remote_config_response.dart';
+import 'package:dart_remote_config/model/remote_config_response.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:shared_aws_api/shared.dart';
 import 'package:yaml/yaml.dart';
