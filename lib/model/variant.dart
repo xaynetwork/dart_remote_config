@@ -24,7 +24,8 @@ class Variant {
       return _$VariantFromJson(json.cast());
     }
     throw RemoteConfigParserException(
-        "Variant: Unknown type in fromJson: $json");
+      "Variant: Unknown type in fromJson: $json",
+    );
   }
 
   Map<String, dynamic> toJson() => _$VariantToJson(this);

@@ -8,10 +8,10 @@ part of 'feature.dart';
 
 Feature _$FeatureFromJson(Map<String, dynamic> json) => Feature(
       id: json['id'] as String,
-      value: json['value'] as String?,
+      value: _valueToJson(json['value']),
     );
 
 Map<String, dynamic> _$FeatureToJson(Feature instance) => <String, dynamic>{
       'id': instance.id,
-      'value': instance.value,
+      'value': _valueFromJson(instance.value),
     };

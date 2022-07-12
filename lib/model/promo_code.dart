@@ -1,7 +1,6 @@
+import 'package:dart_remote_config/model/exceptions/remote_config_parser_exception.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:yaml/yaml.dart';
-
-import 'exceptions/remote_config_parser_exception.dart';
 
 part 'promo_code.g.dart';
 
