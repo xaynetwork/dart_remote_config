@@ -8,6 +8,7 @@ dependencies:
   aws_s3_api: 1.2.0
   freezed_annotation: 2.0.3
   http: 0.13.4
+  json_annotation: 4.5.0
   json_serializable: 6.2.0
   pub_semver: 2.1.1
   yaml: 3.1.1
