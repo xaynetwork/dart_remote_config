@@ -8,7 +8,7 @@ part of 'variant.dart';
 
 Variant _$VariantFromJson(Map<String, dynamic> json) => Variant(
       id: json['id'] as String,
-      features: (json['features'] as List<dynamic>)
+      features: (_readValue(json, 'features') as List<dynamic>)
           .map((e) => Feature.fromJson(e))
           .toList(),
       ratio: json['ratio'] as int? ?? 1,
