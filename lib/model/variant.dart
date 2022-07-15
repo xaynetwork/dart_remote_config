@@ -1,25 +1,19 @@
 import 'package:dart_remote_config/model/exceptions/remote_config_parser_exception.dart';
-import 'package:dart_remote_config/model/feature.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:yaml/yaml.dart';
 
 part 'variant.g.dart';
-
-Object? _readValue(Map<dynamic, dynamic> map, String key) {
-  return map[key];
-}
 
 @JsonSerializable()
 class Variant {
   final String id;
   final int ratio;
 
-  @JsonKey(readValue: _readValue)
-  final List<Feature> features;
+  final List<String> featureIds;
 
   Variant({
     required this.id,
-    required this.features,
+    this.featureIds = const [],
     this.ratio = 1,
   });
 

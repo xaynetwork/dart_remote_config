@@ -27,7 +27,7 @@ class ExperimentationEngine {
 
     results.addAll(_maybeSubscribe(newExperiments, results.hasExclusive));
 
-    return ExperimentationEngineResult.success(results);
+    return ExperimentationEngineResult.success(results, config.features);
   }
 
   Set<ExperimentResult> _maybeSubscribe(

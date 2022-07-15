@@ -174,7 +174,8 @@ abstract class _ExperimentInstance implements ExperimentResult {
 mixin _$ExperimentationEngineResult {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(Set<ExperimentResult> subscribedExperiments)
+    required TResult Function(
+            Set<ExperimentResult> subscribedExperiments, List<Feature> features)
         success,
     required TResult Function(
             ExperimentationEngineResultError error, String? message)
@@ -183,14 +184,18 @@ mixin _$ExperimentationEngineResult {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(Set<ExperimentResult> subscribedExperiments)? success,
+    TResult Function(Set<ExperimentResult> subscribedExperiments,
+            List<Feature> features)?
+        success,
     TResult Function(ExperimentationEngineResultError error, String? message)?
         failure,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(Set<ExperimentResult> subscribedExperiments)? success,
+    TResult Function(Set<ExperimentResult> subscribedExperiments,
+            List<Feature> features)?
+        success,
     TResult Function(ExperimentationEngineResultError error, String? message)?
         failure,
     required TResult orElse(),
@@ -241,7 +246,8 @@ abstract class _$$ExperimentationEngineResultSuccessCopyWith<$Res> {
           _$ExperimentationEngineResultSuccess value,
           $Res Function(_$ExperimentationEngineResultSuccess) then) =
       __$$ExperimentationEngineResultSuccessCopyWithImpl<$Res>;
-  $Res call({Set<ExperimentResult> subscribedExperiments});
+  $Res call(
+      {Set<ExperimentResult> subscribedExperiments, List<Feature> features});
 }
 
 /// @nodoc
@@ -260,12 +266,17 @@ class __$$ExperimentationEngineResultSuccessCopyWithImpl<$Res>
   @override
   $Res call({
     Object? subscribedExperiments = freezed,
+    Object? features = freezed,
   }) {
     return _then(_$ExperimentationEngineResultSuccess(
       subscribedExperiments == freezed
           ? _value._subscribedExperiments
           : subscribedExperiments // ignore: cast_nullable_to_non_nullable
               as Set<ExperimentResult>,
+      features == freezed
+          ? _value._features
+          : features // ignore: cast_nullable_to_non_nullable
+              as List<Feature>,
     ));
   }
 }
@@ -275,8 +286,10 @@ class __$$ExperimentationEngineResultSuccessCopyWithImpl<$Res>
 class _$ExperimentationEngineResultSuccess
     implements ExperimentationEngineResultSuccess {
   const _$ExperimentationEngineResultSuccess(
-      final Set<ExperimentResult> subscribedExperiments)
-      : _subscribedExperiments = subscribedExperiments;
+      final Set<ExperimentResult> subscribedExperiments,
+      final List<Feature> features)
+      : _subscribedExperiments = subscribedExperiments,
+        _features = features;
 
   final Set<ExperimentResult> _subscribedExperiments;
   @override
@@ -285,9 +298,16 @@ class _$ExperimentationEngineResultSuccess
     return EqualUnmodifiableSetView(_subscribedExperiments);
   }
 
+  final List<Feature> _features;
+  @override
+  List<Feature> get features {
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_features);
+  }
+
   @override
   String toString() {
-    return 'ExperimentationEngineResult.success(subscribedExperiments: $subscribedExperiments)';
+    return 'ExperimentationEngineResult.success(subscribedExperiments: $subscribedExperiments, features: $features)';
   }
 
   @override
@@ -296,12 +316,15 @@ class _$ExperimentationEngineResultSuccess
         (other.runtimeType == runtimeType &&
             other is _$ExperimentationEngineResultSuccess &&
             const DeepCollectionEquality()
-                .equals(other._subscribedExperiments, _subscribedExperiments));
+                .equals(other._subscribedExperiments, _subscribedExperiments) &&
+            const DeepCollectionEquality().equals(other._features, _features));
   }
 
   @override
   int get hashCode => Object.hash(
-      runtimeType, const DeepCollectionEquality().hash(_subscribedExperiments));
+      runtimeType,
+      const DeepCollectionEquality().hash(_subscribedExperiments),
+      const DeepCollectionEquality().hash(_features));
 
   @JsonKey(ignore: true)
   @override
@@ -313,35 +336,40 @@ class _$ExperimentationEngineResultSuccess
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(Set<ExperimentResult> subscribedExperiments)
+    required TResult Function(
+            Set<ExperimentResult> subscribedExperiments, List<Feature> features)
         success,
     required TResult Function(
             ExperimentationEngineResultError error, String? message)
         failure,
   }) {
-    return success(subscribedExperiments);
+    return success(subscribedExperiments, features);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(Set<ExperimentResult> subscribedExperiments)? success,
+    TResult Function(Set<ExperimentResult> subscribedExperiments,
+            List<Feature> features)?
+        success,
     TResult Function(ExperimentationEngineResultError error, String? message)?
         failure,
   }) {
-    return success?.call(subscribedExperiments);
+    return success?.call(subscribedExperiments, features);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(Set<ExperimentResult> subscribedExperiments)? success,
+    TResult Function(Set<ExperimentResult> subscribedExperiments,
+            List<Feature> features)?
+        success,
     TResult Function(ExperimentationEngineResultError error, String? message)?
         failure,
     required TResult orElse(),
   }) {
     if (success != null) {
-      return success(subscribedExperiments);
+      return success(subscribedExperiments, features);
     }
     return orElse();
   }
@@ -381,11 +409,12 @@ class _$ExperimentationEngineResultSuccess
 abstract class ExperimentationEngineResultSuccess
     implements ExperimentationEngineResult {
   const factory ExperimentationEngineResultSuccess(
-          final Set<ExperimentResult> subscribedExperiments) =
-      _$ExperimentationEngineResultSuccess;
+      final Set<ExperimentResult> subscribedExperiments,
+      final List<Feature> features) = _$ExperimentationEngineResultSuccess;
 
   Set<ExperimentResult> get subscribedExperiments =>
       throw _privateConstructorUsedError;
+  List<Feature> get features => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   _$$ExperimentationEngineResultSuccessCopyWith<
           _$ExperimentationEngineResultSuccess>
@@ -474,7 +503,8 @@ class _$ExperimentationEngineResultFailure
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(Set<ExperimentResult> subscribedExperiments)
+    required TResult Function(
+            Set<ExperimentResult> subscribedExperiments, List<Feature> features)
         success,
     required TResult Function(
             ExperimentationEngineResultError error, String? message)
@@ -486,7 +516,9 @@ class _$ExperimentationEngineResultFailure
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(Set<ExperimentResult> subscribedExperiments)? success,
+    TResult Function(Set<ExperimentResult> subscribedExperiments,
+            List<Feature> features)?
+        success,
     TResult Function(ExperimentationEngineResultError error, String? message)?
         failure,
   }) {
@@ -496,7 +528,9 @@ class _$ExperimentationEngineResultFailure
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(Set<ExperimentResult> subscribedExperiments)? success,
+    TResult Function(Set<ExperimentResult> subscribedExperiments,
+            List<Feature> features)?
+        success,
     TResult Function(ExperimentationEngineResultError error, String? message)?
         failure,
     required TResult orElse(),
