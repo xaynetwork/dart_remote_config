@@ -4,7 +4,15 @@ import 'package:dart_remote_config/model/remote_config.dart';
 import 'package:dart_remote_config/utils/extensions.dart';
 import 'package:dart_remote_config/utils/random_choice.dart';
 
-class ExperimentationEngine {
+abstract class ExperimentationEngine {
+  ExperimentationEngineResult getResult(
+    RemoteConfig config, [
+    ExperimentationEngineResult? previousResult,
+  ]);
+}
+
+class ExperimentationEngineImpl implements ExperimentationEngine {
+  @override
   ExperimentationEngineResult getResult(
     RemoteConfig config, [
     ExperimentationEngineResult? previousResult,

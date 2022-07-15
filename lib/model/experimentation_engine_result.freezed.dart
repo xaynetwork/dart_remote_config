@@ -174,8 +174,8 @@ abstract class _ExperimentInstance implements ExperimentResult {
 mixin _$ExperimentationEngineResult {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(
-            Set<ExperimentResult> subscribedExperiments, List<Feature> features)
+    required TResult Function(Set<ExperimentResult> subscribedExperiments,
+            List<Feature> featuresDefinedInConfig)
         success,
     required TResult Function(
             ExperimentationEngineResultError error, String? message)
@@ -185,7 +185,7 @@ mixin _$ExperimentationEngineResult {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult Function(Set<ExperimentResult> subscribedExperiments,
-            List<Feature> features)?
+            List<Feature> featuresDefinedInConfig)?
         success,
     TResult Function(ExperimentationEngineResultError error, String? message)?
         failure,
@@ -194,7 +194,7 @@ mixin _$ExperimentationEngineResult {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(Set<ExperimentResult> subscribedExperiments,
-            List<Feature> features)?
+            List<Feature> featuresDefinedInConfig)?
         success,
     TResult Function(ExperimentationEngineResultError error, String? message)?
         failure,
@@ -247,7 +247,8 @@ abstract class _$$ExperimentationEngineResultSuccessCopyWith<$Res> {
           $Res Function(_$ExperimentationEngineResultSuccess) then) =
       __$$ExperimentationEngineResultSuccessCopyWithImpl<$Res>;
   $Res call(
-      {Set<ExperimentResult> subscribedExperiments, List<Feature> features});
+      {Set<ExperimentResult> subscribedExperiments,
+      List<Feature> featuresDefinedInConfig});
 }
 
 /// @nodoc
@@ -266,16 +267,16 @@ class __$$ExperimentationEngineResultSuccessCopyWithImpl<$Res>
   @override
   $Res call({
     Object? subscribedExperiments = freezed,
-    Object? features = freezed,
+    Object? featuresDefinedInConfig = freezed,
   }) {
     return _then(_$ExperimentationEngineResultSuccess(
       subscribedExperiments == freezed
           ? _value._subscribedExperiments
           : subscribedExperiments // ignore: cast_nullable_to_non_nullable
               as Set<ExperimentResult>,
-      features == freezed
-          ? _value._features
-          : features // ignore: cast_nullable_to_non_nullable
+      featuresDefinedInConfig == freezed
+          ? _value._featuresDefinedInConfig
+          : featuresDefinedInConfig // ignore: cast_nullable_to_non_nullable
               as List<Feature>,
     ));
   }
@@ -287,9 +288,9 @@ class _$ExperimentationEngineResultSuccess
     implements ExperimentationEngineResultSuccess {
   const _$ExperimentationEngineResultSuccess(
       final Set<ExperimentResult> subscribedExperiments,
-      final List<Feature> features)
+      final List<Feature> featuresDefinedInConfig)
       : _subscribedExperiments = subscribedExperiments,
-        _features = features;
+        _featuresDefinedInConfig = featuresDefinedInConfig;
 
   final Set<ExperimentResult> _subscribedExperiments;
   @override
@@ -298,16 +299,16 @@ class _$ExperimentationEngineResultSuccess
     return EqualUnmodifiableSetView(_subscribedExperiments);
   }
 
-  final List<Feature> _features;
+  final List<Feature> _featuresDefinedInConfig;
   @override
-  List<Feature> get features {
+  List<Feature> get featuresDefinedInConfig {
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_features);
+    return EqualUnmodifiableListView(_featuresDefinedInConfig);
   }
 
   @override
   String toString() {
-    return 'ExperimentationEngineResult.success(subscribedExperiments: $subscribedExperiments, features: $features)';
+    return 'ExperimentationEngineResult.success(subscribedExperiments: $subscribedExperiments, featuresDefinedInConfig: $featuresDefinedInConfig)';
   }
 
   @override
@@ -317,14 +318,15 @@ class _$ExperimentationEngineResultSuccess
             other is _$ExperimentationEngineResultSuccess &&
             const DeepCollectionEquality()
                 .equals(other._subscribedExperiments, _subscribedExperiments) &&
-            const DeepCollectionEquality().equals(other._features, _features));
+            const DeepCollectionEquality().equals(
+                other._featuresDefinedInConfig, _featuresDefinedInConfig));
   }
 
   @override
   int get hashCode => Object.hash(
       runtimeType,
       const DeepCollectionEquality().hash(_subscribedExperiments),
-      const DeepCollectionEquality().hash(_features));
+      const DeepCollectionEquality().hash(_featuresDefinedInConfig));
 
   @JsonKey(ignore: true)
   @override
@@ -336,40 +338,40 @@ class _$ExperimentationEngineResultSuccess
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(
-            Set<ExperimentResult> subscribedExperiments, List<Feature> features)
+    required TResult Function(Set<ExperimentResult> subscribedExperiments,
+            List<Feature> featuresDefinedInConfig)
         success,
     required TResult Function(
             ExperimentationEngineResultError error, String? message)
         failure,
   }) {
-    return success(subscribedExperiments, features);
+    return success(subscribedExperiments, featuresDefinedInConfig);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult Function(Set<ExperimentResult> subscribedExperiments,
-            List<Feature> features)?
+            List<Feature> featuresDefinedInConfig)?
         success,
     TResult Function(ExperimentationEngineResultError error, String? message)?
         failure,
   }) {
-    return success?.call(subscribedExperiments, features);
+    return success?.call(subscribedExperiments, featuresDefinedInConfig);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(Set<ExperimentResult> subscribedExperiments,
-            List<Feature> features)?
+            List<Feature> featuresDefinedInConfig)?
         success,
     TResult Function(ExperimentationEngineResultError error, String? message)?
         failure,
     required TResult orElse(),
   }) {
     if (success != null) {
-      return success(subscribedExperiments, features);
+      return success(subscribedExperiments, featuresDefinedInConfig);
     }
     return orElse();
   }
@@ -409,12 +411,14 @@ class _$ExperimentationEngineResultSuccess
 abstract class ExperimentationEngineResultSuccess
     implements ExperimentationEngineResult {
   const factory ExperimentationEngineResultSuccess(
-      final Set<ExperimentResult> subscribedExperiments,
-      final List<Feature> features) = _$ExperimentationEngineResultSuccess;
+          final Set<ExperimentResult> subscribedExperiments,
+          final List<Feature> featuresDefinedInConfig) =
+      _$ExperimentationEngineResultSuccess;
 
   Set<ExperimentResult> get subscribedExperiments =>
       throw _privateConstructorUsedError;
-  List<Feature> get features => throw _privateConstructorUsedError;
+  List<Feature> get featuresDefinedInConfig =>
+      throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   _$$ExperimentationEngineResultSuccessCopyWith<
           _$ExperimentationEngineResultSuccess>
@@ -503,8 +507,8 @@ class _$ExperimentationEngineResultFailure
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(
-            Set<ExperimentResult> subscribedExperiments, List<Feature> features)
+    required TResult Function(Set<ExperimentResult> subscribedExperiments,
+            List<Feature> featuresDefinedInConfig)
         success,
     required TResult Function(
             ExperimentationEngineResultError error, String? message)
@@ -517,7 +521,7 @@ class _$ExperimentationEngineResultFailure
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult Function(Set<ExperimentResult> subscribedExperiments,
-            List<Feature> features)?
+            List<Feature> featuresDefinedInConfig)?
         success,
     TResult Function(ExperimentationEngineResultError error, String? message)?
         failure,
@@ -529,7 +533,7 @@ class _$ExperimentationEngineResultFailure
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(Set<ExperimentResult> subscribedExperiments,
-            List<Feature> features)?
+            List<Feature> featuresDefinedInConfig)?
         success,
     TResult Function(ExperimentationEngineResultError error, String? message)?
         failure,
