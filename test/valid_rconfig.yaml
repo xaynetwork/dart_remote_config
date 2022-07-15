@@ -17,3 +17,70 @@
 
     - code: "WE NEED MORE CODES"
       grantedSku: "test"
+
+  features:
+    ## enabled since it's in an "experiment" with one variant
+    - feature:
+      id: payment
+
+    ## disabled since it's not in any "experiment"
+    - feature:
+      id: onboarding
+
+    - feature:
+      id: app_background_color
+      value: "#00FF00"
+
+    - feature:
+      id: button_light_color
+      value: true
+
+    - feature:
+      id: button_dark_color
+      value: "#dark"
+
+  # exiting an experiment happens when either experiment id or variant id don't match persisted ones
+  # If the experiment id is not found, the user returns to default
+  # If variant id is not found then user will change variant depending on the ratio
+  # exlusive can't be changed in the life time of an expirement (when size < 1 AND # of variants > 1)
+  experiments:
+    # a rollout experiment has only one variant
+    - experiment:
+      id: background_color
+      enabled: true  #default is true
+      exclusive: false  #default is true
+      size: 0.4
+      variants:
+        - id: a
+          #default is 1
+          ratio: 1
+          featureIds:
+            - app_background_color
+
+    # a concluded rollout experiment with one variant and size = 1
+    - experiment:
+      id: payment_rollout
+      enabled: true #default is true
+      exclusive: false #default is true
+      size: 1.0
+      variants:
+        - id: a
+          ratio: 1 #default is 1
+          featureIds:
+            - payment
+
+    # an exclusive a/b experiment with two variant for half the user base
+    - experiment:
+      id: button_color
+      enabled: true #default is true
+      exclusive: true #default is true | A user will only subscribe to one exclusive experiment at a time
+      size: 0.5
+      variants:
+        - id: a
+          ratio: 4
+          featureIds:
+            - button_dark_color
+        - id: b
+          ratio: 6
+          featureIds:
+            - button_light_color

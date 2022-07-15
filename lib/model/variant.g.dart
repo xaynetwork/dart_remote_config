@@ -8,14 +8,15 @@ part of 'variant.dart';
 
 Variant _$VariantFromJson(Map<String, dynamic> json) => Variant(
       id: json['id'] as String,
-      features: (_readValue(json, 'features') as List<dynamic>)
-          .map((e) => Feature.fromJson(e))
-          .toList(),
+      featureIds: (json['featureIds'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
       ratio: json['ratio'] as int? ?? 1,
     );
 
 Map<String, dynamic> _$VariantToJson(Variant instance) => <String, dynamic>{
       'id': instance.id,
       'ratio': instance.ratio,
-      'features': instance.features,
+      'featureIds': instance.featureIds,
     };

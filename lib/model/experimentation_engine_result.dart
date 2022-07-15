@@ -34,6 +34,7 @@ extension ExperimentInstanceExtension on ExperimentResult {
 class ExperimentationEngineResult with _$ExperimentationEngineResult {
   const factory ExperimentationEngineResult.success(
     final Set<ExperimentResult> subscribedExperiments,
+    final List<Feature> features,
   ) = ExperimentationEngineResultSuccess;
 
   const factory ExperimentationEngineResult.failure({
@@ -47,8 +48,9 @@ extension ExperimentationEngineResultSuccessExtension
   Set<ExperimentResult> get activeExperiments =>
       subscribedExperiments.where((e) => !e.isConcluded).toSet();
 
-  Set<Feature> get enabledFeatures => subscribedExperiments
-      .map((e) => e.variant.features)
-      .expand((e) => e)
+  Set<Feature> get enabledFeatureIds => subscribedExperiments
+      .map((it) => it.variant.featureIds)
+      .expand((it) => it)
+      .map((it) => features.firstWhere((feature) => feature.id == it))
       .toSet();
 }
