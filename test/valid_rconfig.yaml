@@ -20,6 +20,7 @@
 
   features:
     ## enabled since it's in an "experiment" with one variant
+    ## Not necessarily defined here, since it doesn't contain a "value", it could be defined under a variant directly
     - feature:
       id: payment
 
