@@ -10,12 +10,12 @@ _$_ExperimentInstance _$$_ExperimentInstanceFromJson(
         Map<String, dynamic> json) =>
     _$_ExperimentInstance(
       experiment: Experiment.fromJson(json['experiment']),
-      selectedVariant: Variant.fromJson(json['selectedVariant']),
+      initialSelectedVariant: Variant.fromJson(json['initialSelectedVariant']),
     );
 
 Map<String, dynamic> _$$_ExperimentInstanceToJson(
         _$_ExperimentInstance instance) =>
     <String, dynamic>{
       'experiment': instance.experiment,
-      'selectedVariant': instance.selectedVariant,
+      'initialSelectedVariant': instance.initialSelectedVariant,
     };
