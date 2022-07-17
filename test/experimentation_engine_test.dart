@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dart_remote_config/experimentation/experimentation_engine.dart';
 import 'package:dart_remote_config/model/experiment.dart';
 import 'package:dart_remote_config/model/experimentation_engine_result.dart';
@@ -32,7 +34,7 @@ void main() {
         () async {
       const featureId = 'feature_1';
       final fakeUniVariantExperiment = Experiment(
-        id: 'experiment_1',
+        id: 'experiment1',
         size: 1,
         variants: [
           Variant(
@@ -69,7 +71,7 @@ void main() {
       const featureId1 = 'feature_1';
       const featureId2 = 'feature_2';
       final fakeUniVariantExperiment1 = Experiment(
-        id: 'experiment_1',
+        id: 'experiment1',
         size: 1,
         exclusive: false,
         variants: [
@@ -80,7 +82,7 @@ void main() {
         ],
       );
       final fakeUniVariantExperiment2 = Experiment(
-        id: 'experiment_2',
+        id: 'experiment2',
         size: 1,
         exclusive: false,
         variants: [
@@ -122,7 +124,7 @@ void main() {
       const featureId1 = 'feature_1';
       const featureId2 = 'feature_2';
       final fakeUniVariantExperiment1 = Experiment(
-        id: 'experiment_1',
+        id: 'experiment1',
         size: 1,
         variants: [
           Variant(
@@ -132,7 +134,7 @@ void main() {
         ],
       );
       final fakeUniVariantExperiment2 = Experiment(
-        id: 'experiment_2',
+        id: 'experiment2',
         size: 1,
         variants: [
           Variant(
@@ -174,7 +176,7 @@ void main() {
       const featureId2 = 'feature_2';
       const featureId3 = 'feature_3';
       final fakeUniVariantExperiment1 = Experiment(
-        id: 'experiment_1',
+        id: 'experiment1',
         size: 1,
         variants: [
           Variant(
@@ -184,7 +186,7 @@ void main() {
         ],
       );
       final fakeUniVariantExperiment2 = Experiment(
-        id: 'experiment_2',
+        id: 'experiment2',
         size: 1,
         exclusive: false,
         variants: [
@@ -238,6 +240,289 @@ void main() {
           FeatureValue.nothing(),
           FeatureValue.nothing(),
         ],
+      );
+    });
+  });
+
+  group('rollout experiments with single variant and size < 1', () {
+    test(
+        'when a single rollout with size 0.5, then half the user base subscribe',
+        () async {
+      const size = 0.5;
+      const userCount = 1000;
+      const expectedSubscribersCount = userCount * size;
+      final sigma = sqrt(pow(userCount, 2) / 12);
+
+      const featureId = 'feature_1';
+      final fakeUniVariantExperiment = Experiment(
+        id: 'experiment1',
+        size: size,
+        variants: [
+          Variant(
+            id: 'variant_1',
+            featureIds: [featureId],
+          ),
+        ],
+      );
+
+      final RemoteConfig fakeConfig = RemoteConfig(
+        appVersion: VersionConstraint.any,
+        experiments: [fakeUniVariantExperiment],
+      );
+
+      expect(fakeUniVariantExperiment.type, ExperimentType.rollout);
+
+      var countUsersSubscribed = 0;
+
+      for (int i = 0; i < userCount; i++) {
+        final result = ExperimentationEngineImpl().getResult(fakeConfig);
+        expect(result, isA<ExperimentationEngineResultSuccess>());
+        final successfulResult = result as ExperimentationEngineResultSuccess;
+        if (successfulResult.subscribedExperiments
+            .map((it) => it.experiment)
+            .contains(fakeUniVariantExperiment)) {
+          countUsersSubscribed++;
+        }
+      }
+
+      expect(
+        countUsersSubscribed,
+        greaterThanOrEqualTo(expectedSubscribersCount - sigma),
+      );
+      expect(
+        countUsersSubscribed,
+        lessThanOrEqualTo(expectedSubscribersCount + sigma),
+      );
+    });
+    test(
+        'when multiple exclusive rollouts with size 0.5, then half the user base subscribe to either one of them',
+        () async {
+      const size1 = 0.2;
+      const size2 = 0.7;
+      const userCount = 1000;
+      const expectedSubscribersCount1 = userCount * size1;
+      const expectedSubscribersCount2 = userCount * size2;
+      final sigma = sqrt(pow(userCount, 2) / 12);
+
+      final experiment1 = Experiment(
+        id: 'experiment1',
+        size: size1,
+        variants: [
+          Variant(
+            id: 'variant_1',
+            featureIds: ['feature_1'],
+          ),
+        ],
+      );
+      final experiment2 = Experiment(
+        id: 'experiment2',
+        size: size2,
+        variants: [
+          Variant(
+            id: 'variant_2',
+            featureIds: ['feature_2'],
+          ),
+        ],
+      );
+
+      final RemoteConfig fakeConfig = RemoteConfig(
+        appVersion: VersionConstraint.any,
+        experiments: [experiment1, experiment2],
+      );
+
+      expect(experiment1.type, ExperimentType.rollout);
+      expect(experiment2.type, ExperimentType.rollout);
+
+      var subscribedUsersExperiment1 = 0;
+      var subscribedUsersExperiment2 = 0;
+
+      for (int i = 0; i < userCount; i++) {
+        final result = ExperimentationEngineImpl().getResult(fakeConfig);
+        expect(result, isA<ExperimentationEngineResultSuccess>());
+        final successfulResult = result as ExperimentationEngineResultSuccess;
+        final experiments =
+            successfulResult.subscribedExperiments.map((it) => it.experiment);
+        if (experiments.contains(experiment1)) {
+          subscribedUsersExperiment1++;
+        }
+        if (experiments.contains(experiment2)) {
+          subscribedUsersExperiment2++;
+        }
+      }
+
+      expect(
+        subscribedUsersExperiment1,
+        greaterThanOrEqualTo(expectedSubscribersCount1 - sigma),
+      );
+      expect(
+        subscribedUsersExperiment1,
+        lessThanOrEqualTo(expectedSubscribersCount1 + sigma),
+      );
+      expect(
+        subscribedUsersExperiment2,
+        greaterThanOrEqualTo(expectedSubscribersCount2 - sigma),
+      );
+      expect(
+        subscribedUsersExperiment2,
+        lessThanOrEqualTo(expectedSubscribersCount2 + sigma),
+      );
+    });
+    test(
+        'when multiple inclusive rollouts with size 0.5, then half the user base subscribe to any one of them',
+        () async {
+      const size1 = 0.2;
+      const size2 = 0.7;
+      const userCount = 1000;
+      const expectedSubscribersCount1 = userCount * size1;
+      const expectedSubscribersCount2 = userCount * size2;
+      final sigma = sqrt(pow(userCount, 2) / 12);
+
+      final experiment1 = Experiment(
+        id: 'experiment1',
+        exclusive: false,
+        size: size1,
+        variants: [
+          Variant(
+            id: 'variant_1',
+            featureIds: ['feature_1'],
+          ),
+        ],
+      );
+      final experiment2 = Experiment(
+        id: 'experiment2',
+        exclusive: false,
+        size: size2,
+        variants: [
+          Variant(
+            id: 'variant_2',
+            featureIds: ['feature_2'],
+          ),
+        ],
+      );
+
+      final RemoteConfig fakeConfig = RemoteConfig(
+        appVersion: VersionConstraint.any,
+        experiments: [experiment1, experiment2],
+      );
+
+      expect(experiment1.type, ExperimentType.rollout);
+      expect(experiment2.type, ExperimentType.rollout);
+
+      var subscribedUsersExperiment1 = 0;
+      var subscribedUsersExperiment2 = 0;
+
+      for (int i = 0; i < userCount; i++) {
+        final result = ExperimentationEngineImpl().getResult(fakeConfig);
+        expect(result, isA<ExperimentationEngineResultSuccess>());
+        final successfulResult = result as ExperimentationEngineResultSuccess;
+        final experiments =
+            successfulResult.subscribedExperiments.map((it) => it.experiment);
+        if (experiments.contains(experiment1)) {
+          subscribedUsersExperiment1++;
+        }
+        if (experiments.contains(experiment2)) {
+          subscribedUsersExperiment2++;
+        }
+      }
+
+      expect(
+        subscribedUsersExperiment1,
+        greaterThanOrEqualTo(expectedSubscribersCount1 - sigma),
+      );
+      expect(
+        subscribedUsersExperiment1,
+        lessThanOrEqualTo(expectedSubscribersCount1 + sigma),
+      );
+      expect(
+        subscribedUsersExperiment2,
+        greaterThanOrEqualTo(expectedSubscribersCount2 - sigma),
+      );
+      expect(
+        subscribedUsersExperiment2,
+        lessThanOrEqualTo(expectedSubscribersCount2 + sigma),
+      );
+    });
+  });
+
+  group('experiments with multiple variants and size < 1', () {
+    test(
+        'when a single experiment with size < 1, and more than one variant then a portion of the user base will subscribe to different variants',
+        () async {
+      const size = 0.3;
+      const userCount = 1000;
+      const expectedSubscribersCount = userCount * size;
+      final sigma = sqrt(pow(userCount, 2) / 12);
+
+      final variant1 = Variant(
+        id: 'variant_1',
+        ratio: 2,
+        featureIds: ['feature_1'],
+      );
+
+      final variant2 = Variant(
+        id: 'variant_2',
+        ratio: 5,
+        featureIds: ['feature_2'],
+      );
+
+      final fakeUniVariantExperiment = Experiment(
+        id: 'experiment1',
+        size: size,
+        variants: [
+          variant1,
+          variant2,
+        ],
+      );
+
+      final RemoteConfig fakeConfig = RemoteConfig(
+        appVersion: VersionConstraint.any,
+        experiments: [fakeUniVariantExperiment],
+      );
+
+      expect(fakeUniVariantExperiment.type, ExperimentType.aBExperiment);
+
+      var countUsersSubscribed = 0;
+      var countVariant1Subscribers = 0;
+      var countVariant2Subscribers = 0;
+
+      for (int i = 0; i < userCount; i++) {
+        final result = ExperimentationEngineImpl().getResult(fakeConfig);
+        expect(result, isA<ExperimentationEngineResultSuccess>());
+        final successfulResult = result as ExperimentationEngineResultSuccess;
+        final experiments =
+            successfulResult.subscribedExperiments.map((it) => it.experiment);
+        if (experiments.contains(fakeUniVariantExperiment)) {
+          countUsersSubscribed++;
+          final subscribedVariant =
+              successfulResult.subscribedExperiments.first.variant;
+          if (subscribedVariant == variant1) countVariant1Subscribers++;
+          if (subscribedVariant == variant2) countVariant2Subscribers++;
+        }
+      }
+
+      expect(
+        countUsersSubscribed,
+        greaterThanOrEqualTo(expectedSubscribersCount - sigma),
+      );
+      expect(
+        countUsersSubscribed,
+        lessThanOrEqualTo(expectedSubscribersCount + sigma),
+      );
+
+      expect(
+        countVariant1Subscribers / countVariant2Subscribers,
+        lessThanOrEqualTo(
+          (variant1.ratio / variant2.ratio) +
+              (1 - (sigma / expectedSubscribersCount)),
+        ),
+      );
+
+      expect(
+        countVariant1Subscribers / countVariant2Subscribers,
+        greaterThanOrEqualTo(
+          (variant1.ratio / variant2.ratio) -
+              (1 - (sigma / expectedSubscribersCount)),
+        ),
       );
     });
   });
