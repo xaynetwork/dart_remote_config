@@ -170,6 +170,23 @@ abstract class _ExperimentInstance implements ExperimentResult {
       throw _privateConstructorUsedError;
 }
 
+ExperimentationEngineResult _$ExperimentationEngineResultFromJson(
+    Map<String, dynamic> json) {
+  switch (json['runtimeType']) {
+    case 'success':
+      return ExperimentationEngineResultSuccess.fromJson(json);
+    case 'failure':
+      return ExperimentationEngineResultFailure.fromJson(json);
+
+    default:
+      throw CheckedFromJsonException(
+          json,
+          'runtimeType',
+          'ExperimentationEngineResult',
+          'Invalid union type "${json['runtimeType']}"!');
+  }
+}
+
 /// @nodoc
 mixin _$ExperimentationEngineResult {
   @optionalTypeArgs
@@ -220,6 +237,7 @@ mixin _$ExperimentationEngineResult {
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -283,14 +301,20 @@ class __$$ExperimentationEngineResultSuccessCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
+@JsonSerializable()
 class _$ExperimentationEngineResultSuccess
     implements ExperimentationEngineResultSuccess {
   const _$ExperimentationEngineResultSuccess(
       final Set<ExperimentResult> subscribedExperiments,
-      final List<Feature> featuresDefinedInConfig)
+      final List<Feature> featuresDefinedInConfig,
+      {final String? $type})
       : _subscribedExperiments = subscribedExperiments,
-        _featuresDefinedInConfig = featuresDefinedInConfig;
+        _featuresDefinedInConfig = featuresDefinedInConfig,
+        $type = $type ?? 'success';
+
+  factory _$ExperimentationEngineResultSuccess.fromJson(
+          Map<String, dynamic> json) =>
+      _$$ExperimentationEngineResultSuccessFromJson(json);
 
   final Set<ExperimentResult> _subscribedExperiments;
   @override
@@ -305,6 +329,9 @@ class _$ExperimentationEngineResultSuccess
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_featuresDefinedInConfig);
   }
+
+  @JsonKey(name: 'runtimeType')
+  final String $type;
 
   @override
   String toString() {
@@ -322,6 +349,7 @@ class _$ExperimentationEngineResultSuccess
                 other._featuresDefinedInConfig, _featuresDefinedInConfig));
   }
 
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -406,6 +434,11 @@ class _$ExperimentationEngineResultSuccess
     }
     return orElse();
   }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ExperimentationEngineResultSuccessToJson(this);
+  }
 }
 
 abstract class ExperimentationEngineResultSuccess
@@ -414,6 +447,10 @@ abstract class ExperimentationEngineResultSuccess
           final Set<ExperimentResult> subscribedExperiments,
           final List<Feature> featuresDefinedInConfig) =
       _$ExperimentationEngineResultSuccess;
+
+  factory ExperimentationEngineResultSuccess.fromJson(
+          Map<String, dynamic> json) =
+      _$ExperimentationEngineResultSuccess.fromJson;
 
   Set<ExperimentResult> get subscribedExperiments =>
       throw _privateConstructorUsedError;
@@ -466,16 +503,24 @@ class __$$ExperimentationEngineResultFailureCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
+@JsonSerializable()
 class _$ExperimentationEngineResultFailure
     implements ExperimentationEngineResultFailure {
   const _$ExperimentationEngineResultFailure(
-      {required this.error, this.message});
+      {required this.error, this.message, final String? $type})
+      : $type = $type ?? 'failure';
+
+  factory _$ExperimentationEngineResultFailure.fromJson(
+          Map<String, dynamic> json) =>
+      _$$ExperimentationEngineResultFailureFromJson(json);
 
   @override
   final ExperimentationEngineResultError error;
   @override
   final String? message;
+
+  @JsonKey(name: 'runtimeType')
+  final String $type;
 
   @override
   String toString() {
@@ -491,6 +536,7 @@ class _$ExperimentationEngineResultFailure
             const DeepCollectionEquality().equals(other.message, message));
   }
 
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -575,6 +621,11 @@ class _$ExperimentationEngineResultFailure
     }
     return orElse();
   }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ExperimentationEngineResultFailureToJson(this);
+  }
 }
 
 abstract class ExperimentationEngineResultFailure
@@ -582,6 +633,10 @@ abstract class ExperimentationEngineResultFailure
   const factory ExperimentationEngineResultFailure(
       {required final ExperimentationEngineResultError error,
       final String? message}) = _$ExperimentationEngineResultFailure;
+
+  factory ExperimentationEngineResultFailure.fromJson(
+          Map<String, dynamic> json) =
+      _$ExperimentationEngineResultFailure.fromJson;
 
   ExperimentationEngineResultError get error =>
       throw _privateConstructorUsedError;
