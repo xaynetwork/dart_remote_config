@@ -41,6 +41,8 @@ class ExperimentationEngineResult with _$ExperimentationEngineResult {
     required ExperimentationEngineResultError error,
     String? message,
   }) = ExperimentationEngineResultFailure;
+  factory ExperimentationEngineResult.fromJson(Map<String, dynamic> json) =>
+      _$ExperimentationEngineResultFromJson(json);
 }
 
 extension ExperimentationEngineResultSuccessExtension
