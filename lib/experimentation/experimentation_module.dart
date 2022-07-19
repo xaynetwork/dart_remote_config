@@ -16,7 +16,7 @@ class ExperimentsFetcherImpl implements ExperimentationModule {
   @override
   Future<ExperimentationEngineResult> fetch(RemoteConfig config) async {
     final previousResult = await readPreviousResult();
-    final newResult = _engine.getResult(config, previousResult);
+    final newResult = _engine.computeResult(config, previousResult);
     await writeResult(newResult);
     return newResult;
   }

@@ -43,5 +43,5 @@ bool isHit(double percentage) {
       'must be between 0 and 1',
     );
   }
-  return Random().nextDouble() <= percentage;
+  return Random.secure().nextDouble() <= percentage;
 }

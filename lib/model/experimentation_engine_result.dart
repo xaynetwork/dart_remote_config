@@ -25,7 +25,7 @@ class ExperimentResult with _$ExperimentResult {
 extension ExperimentInstanceExtension on ExperimentResult {
   bool get isConcluded => experiment.isConcluded;
 
-  Variant get variant => experiment.isConcluded
+  Variant get selectedVariant => experiment.isConcluded
       ? experiment.variants.single
       : initialSelectedVariant;
 }
@@ -51,7 +51,7 @@ extension ExperimentationEngineResultSuccessExtension
       subscribedExperiments.where((e) => !e.isConcluded).toSet();
 
   Set<Feature> get enabledFeatures => subscribedExperiments
-      .map((it) => it.variant.featureIds)
+      .map((it) => it.selectedVariant.featureIds)
       .expand((it) => it)
       .map(
         (it) => featuresDefinedInConfig.firstWhere(
