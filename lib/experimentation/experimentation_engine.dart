@@ -5,7 +5,7 @@ import 'package:dart_remote_config/utils/extensions.dart';
 import 'package:dart_remote_config/utils/random_choice.dart';
 
 abstract class ExperimentationEngine {
-  ExperimentationEngineResult getResult(
+  ExperimentationEngineResult computeResult(
     RemoteConfig config, [
     ExperimentationEngineResult? previousResult,
   ]);
@@ -13,7 +13,7 @@ abstract class ExperimentationEngine {
 
 class ExperimentationEngineImpl implements ExperimentationEngine {
   @override
-  ExperimentationEngineResult getResult(
+  ExperimentationEngineResult computeResult(
     RemoteConfig config, [
     ExperimentationEngineResult? previousResult,
   ]) {
@@ -39,12 +39,14 @@ class ExperimentationEngineImpl implements ExperimentationEngine {
   }
 
   Set<ExperimentResult> _maybeSubscribe(
-    Iterable<Experiment> experiments,
+    Set<Experiment> experiments,
     bool hadExclusive,
   ) {
     final results = <ExperimentResult>{};
 
-    for (final experiment in experiments) {
+    final shuffledExperiments = List<Experiment>.from(experiments)..shuffle();
+
+    for (final experiment in shuffledExperiments.toSet()) {
       final hasExclusive = hadExclusive || results.hasExclusive;
 
       if (hasExclusive && experiment.exclusive) continue;
@@ -78,7 +80,8 @@ class ExperimentationEngineImpl implements ExperimentationEngine {
       if (nextExperiments.contains(prevExperiment)) {
         final nextExperiment =
             nextExperiments.firstWhere((it) => it == prevExperiment);
-        final variantExists = nextExperiment.variants.contains(result.variant);
+        final variantExists =
+            nextExperiment.variants.contains(result.selectedVariant);
         if (variantExists) {
           resultsToSkip.add(result);
         }

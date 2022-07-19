@@ -1,5 +1,6 @@
 import 'package:dart_remote_config/model/exceptions/remote_config_parser_exception.dart';
 import 'package:dart_remote_config/model/variant.dart';
+import 'package:equatable/equatable.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:yaml/yaml.dart';
 
@@ -30,9 +31,8 @@ enum ExperimentType {
   }
 }
 
-@immutable
 @JsonSerializable()
-class Experiment {
+class Experiment extends Equatable {
   final String id;
 
   @JsonKey(defaultValue: true)
@@ -75,14 +75,5 @@ class Experiment {
   Map<String, dynamic> toJson() => _$ExperimentToJson(this);
 
   @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is Experiment &&
-            const DeepCollectionEquality().equals(other.id, id));
-  }
-
-  @override
-  int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(id));
+  List<Object> get props => [id];
 }

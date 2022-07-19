@@ -24,7 +24,7 @@ void main() {
 
   test('Fetching a config and running a successful experiment', () async {
     final config = await getRemoteConfig();
-    final result = ExperimentationEngineImpl().getResult(config);
+    final result = ExperimentationEngineImpl().computeResult(config);
     expect(result, isA<ExperimentationEngineResultSuccess>());
   });
 
@@ -33,7 +33,7 @@ void main() {
         'When a single variable concluded experiment with size=1, then subscribe',
         () async {
       const featureId = 'feature_1';
-      final fakeUniVariantExperiment = Experiment(
+      const fakeUniVariantExperiment = Experiment(
         id: 'experiment1',
         size: 1,
         variants: [
@@ -51,7 +51,7 @@ void main() {
 
       expect(fakeUniVariantExperiment.type, ExperimentType.concluded);
 
-      final result = ExperimentationEngineImpl().getResult(fakeConfig);
+      final result = ExperimentationEngineImpl().computeResult(fakeConfig);
       expect(result, isA<ExperimentationEngineResultSuccess>());
       final successfulResult = result as ExperimentationEngineResultSuccess;
       expect(successfulResult.activeExperiments.length, 0);
@@ -70,7 +70,7 @@ void main() {
         () async {
       const featureId1 = 'feature_1';
       const featureId2 = 'feature_2';
-      final fakeUniVariantExperiment1 = Experiment(
+      const fakeUniVariantExperiment1 = Experiment(
         id: 'experiment1',
         size: 1,
         exclusive: false,
@@ -81,7 +81,7 @@ void main() {
           ),
         ],
       );
-      final fakeUniVariantExperiment2 = Experiment(
+      const fakeUniVariantExperiment2 = Experiment(
         id: 'experiment2',
         size: 1,
         exclusive: false,
@@ -101,7 +101,7 @@ void main() {
       expect(fakeUniVariantExperiment1.type, ExperimentType.concluded);
       expect(fakeUniVariantExperiment2.type, ExperimentType.concluded);
 
-      final result = ExperimentationEngineImpl().getResult(fakeConfig);
+      final result = ExperimentationEngineImpl().computeResult(fakeConfig);
       expect(result, isA<ExperimentationEngineResultSuccess>());
       final successfulResult = result as ExperimentationEngineResultSuccess;
       expect(successfulResult.activeExperiments.length, 0);
@@ -109,21 +109,27 @@ void main() {
       expect(successfulResult.featuresDefinedInConfig.length, 0);
       expect(successfulResult.enabledFeatures.length, 2);
       expect(
-        successfulResult.enabledFeatures.map((it) => it.id),
-        [featureId1, featureId2],
+        successfulResult.enabledFeatures.map((it) => it.id).toSet().difference(
+          {featureId1, featureId2},
+        ).isEmpty,
+        true,
       );
       expect(
-        successfulResult.enabledFeatures.map((it) => it.value),
-        const [FeatureValue.nothing(), FeatureValue.nothing()],
+        successfulResult.enabledFeatures
+            .map((it) => it.value)
+            .toSet()
+            .difference(
+          {const FeatureValue.nothing()},
+        ).isEmpty,
+        true,
       );
     });
-
     test(
         'When multiple exclusive single variable concluded experiments with size=1, then subscribe to the first',
         () async {
       const featureId1 = 'feature_1';
       const featureId2 = 'feature_2';
-      final fakeUniVariantExperiment1 = Experiment(
+      const fakeUniVariantExperiment1 = Experiment(
         id: 'experiment1',
         size: 1,
         variants: [
@@ -133,7 +139,7 @@ void main() {
           ),
         ],
       );
-      final fakeUniVariantExperiment2 = Experiment(
+      const fakeUniVariantExperiment2 = Experiment(
         id: 'experiment2',
         size: 1,
         variants: [
@@ -152,21 +158,13 @@ void main() {
       expect(fakeUniVariantExperiment1.type, ExperimentType.concluded);
       expect(fakeUniVariantExperiment2.type, ExperimentType.concluded);
 
-      final result = ExperimentationEngineImpl().getResult(fakeConfig);
+      final result = ExperimentationEngineImpl().computeResult(fakeConfig);
       expect(result, isA<ExperimentationEngineResultSuccess>());
       final successfulResult = result as ExperimentationEngineResultSuccess;
       expect(successfulResult.activeExperiments.length, 0);
       expect(successfulResult.subscribedExperiments.length, 1);
       expect(successfulResult.featuresDefinedInConfig.length, 0);
       expect(successfulResult.enabledFeatures.length, 1);
-      expect(
-        successfulResult.enabledFeatures.map((it) => it.id),
-        [featureId1],
-      );
-      expect(
-        successfulResult.enabledFeatures.map((it) => it.value),
-        const [FeatureValue.nothing()],
-      );
     });
 
     test(
@@ -175,7 +173,7 @@ void main() {
       const featureId1 = 'feature_1';
       const featureId2 = 'feature_2';
       const featureId3 = 'feature_3';
-      final fakeUniVariantExperiment1 = Experiment(
+      const fakeUniVariantExperiment1 = Experiment(
         id: 'experiment1',
         size: 1,
         variants: [
@@ -185,7 +183,7 @@ void main() {
           ),
         ],
       );
-      final fakeUniVariantExperiment2 = Experiment(
+      const fakeUniVariantExperiment2 = Experiment(
         id: 'experiment2',
         size: 1,
         exclusive: false,
@@ -197,7 +195,7 @@ void main() {
         ],
       );
 
-      final fakeUniVariantExperiment3 = Experiment(
+      const fakeUniVariantExperiment3 = Experiment(
         id: 'experiment_3',
         size: 1,
         exclusive: false,
@@ -222,7 +220,9 @@ void main() {
       expect(fakeUniVariantExperiment2.type, ExperimentType.concluded);
       expect(fakeUniVariantExperiment3.type, ExperimentType.concluded);
 
-      final result = ExperimentationEngineImpl().getResult(fakeConfig);
+      final result = ExperimentationEngineImpl().computeResult(
+        fakeConfig,
+      );
       expect(result, isA<ExperimentationEngineResultSuccess>());
       final successfulResult = result as ExperimentationEngineResultSuccess;
       expect(successfulResult.activeExperiments.length, 0);
@@ -230,16 +230,19 @@ void main() {
       expect(successfulResult.featuresDefinedInConfig.length, 0);
       expect(successfulResult.enabledFeatures.length, 3);
       expect(
-        successfulResult.enabledFeatures.map((it) => it.id),
-        [featureId1, featureId2, featureId3],
+        successfulResult.enabledFeatures.map((it) => it.id).toSet().difference(
+          {featureId1, featureId2, featureId3},
+        ).isEmpty,
+        true,
       );
       expect(
-        successfulResult.enabledFeatures.map((it) => it.value),
-        const [
-          FeatureValue.nothing(),
-          FeatureValue.nothing(),
-          FeatureValue.nothing(),
-        ],
+        successfulResult.enabledFeatures
+            .map((it) => it.value)
+            .toSet()
+            .difference(
+          {const FeatureValue.nothing()},
+        ).isEmpty,
+        true,
       );
     });
   });
@@ -254,7 +257,7 @@ void main() {
       final sigma = sqrt(pow(userCount, 2) / 12);
 
       const featureId = 'feature_1';
-      final fakeUniVariantExperiment = Experiment(
+      const fakeUniVariantExperiment = Experiment(
         id: 'experiment1',
         size: size,
         variants: [
@@ -275,7 +278,7 @@ void main() {
       var countUsersSubscribed = 0;
 
       for (int i = 0; i < userCount; i++) {
-        final result = ExperimentationEngineImpl().getResult(fakeConfig);
+        final result = ExperimentationEngineImpl().computeResult(fakeConfig);
         expect(result, isA<ExperimentationEngineResultSuccess>());
         final successfulResult = result as ExperimentationEngineResultSuccess;
         if (successfulResult.subscribedExperiments
@@ -304,7 +307,7 @@ void main() {
       const expectedSubscribersCount2 = userCount * size2;
       final sigma = sqrt(pow(userCount, 2) / 12);
 
-      final experiment1 = Experiment(
+      const experiment1 = Experiment(
         id: 'experiment1',
         size: size1,
         variants: [
@@ -314,7 +317,7 @@ void main() {
           ),
         ],
       );
-      final experiment2 = Experiment(
+      const experiment2 = Experiment(
         id: 'experiment2',
         size: size2,
         variants: [
@@ -337,7 +340,7 @@ void main() {
       var subscribedUsersExperiment2 = 0;
 
       for (int i = 0; i < userCount; i++) {
-        final result = ExperimentationEngineImpl().getResult(fakeConfig);
+        final result = ExperimentationEngineImpl().computeResult(fakeConfig);
         expect(result, isA<ExperimentationEngineResultSuccess>());
         final successfulResult = result as ExperimentationEngineResultSuccess;
         final experiments =
@@ -377,7 +380,7 @@ void main() {
       const expectedSubscribersCount2 = userCount * size2;
       final sigma = sqrt(pow(userCount, 2) / 12);
 
-      final experiment1 = Experiment(
+      const experiment1 = Experiment(
         id: 'experiment1',
         exclusive: false,
         size: size1,
@@ -388,7 +391,7 @@ void main() {
           ),
         ],
       );
-      final experiment2 = Experiment(
+      const experiment2 = Experiment(
         id: 'experiment2',
         exclusive: false,
         size: size2,
@@ -412,7 +415,7 @@ void main() {
       var subscribedUsersExperiment2 = 0;
 
       for (int i = 0; i < userCount; i++) {
-        final result = ExperimentationEngineImpl().getResult(fakeConfig);
+        final result = ExperimentationEngineImpl().computeResult(fakeConfig);
         expect(result, isA<ExperimentationEngineResultSuccess>());
         final successfulResult = result as ExperimentationEngineResultSuccess;
         final experiments =
@@ -453,19 +456,19 @@ void main() {
       const expectedSubscribersCount = userCount * size;
       final sigma = sqrt(pow(userCount, 2) / 12);
 
-      final variant1 = Variant(
+      const variant1 = Variant(
         id: 'variant_1',
         ratio: 2,
         featureIds: ['feature_1'],
       );
 
-      final variant2 = Variant(
+      const variant2 = Variant(
         id: 'variant_2',
         ratio: 5,
         featureIds: ['feature_2'],
       );
 
-      final fakeUniVariantExperiment = Experiment(
+      const fakeUniVariantExperiment = Experiment(
         id: 'experiment1',
         size: size,
         variants: [
@@ -486,7 +489,7 @@ void main() {
       var countVariant2Subscribers = 0;
 
       for (int i = 0; i < userCount; i++) {
-        final result = ExperimentationEngineImpl().getResult(fakeConfig);
+        final result = ExperimentationEngineImpl().computeResult(fakeConfig);
         expect(result, isA<ExperimentationEngineResultSuccess>());
         final successfulResult = result as ExperimentationEngineResultSuccess;
         final experiments =
@@ -494,7 +497,7 @@ void main() {
         if (experiments.contains(fakeUniVariantExperiment)) {
           countUsersSubscribed++;
           final subscribedVariant =
-              successfulResult.subscribedExperiments.first.variant;
+              successfulResult.subscribedExperiments.first.selectedVariant;
           if (subscribedVariant == variant1) countVariant1Subscribers++;
           if (subscribedVariant == variant2) countVariant2Subscribers++;
         }
@@ -509,19 +512,21 @@ void main() {
         lessThanOrEqualTo(expectedSubscribersCount + sigma),
       );
 
+      final sigmaActualSubscribers =
+          sqrt(pow(countVariant1Subscribers, 2) / 12);
+      final error = 1 - (sigmaActualSubscribers / expectedSubscribersCount);
+
       expect(
         countVariant1Subscribers / countVariant2Subscribers,
         lessThanOrEqualTo(
-          (variant1.ratio / variant2.ratio) +
-              (1 - (sigma / expectedSubscribersCount)),
+          (variant1.ratio / variant2.ratio) + error,
         ),
       );
 
       expect(
         countVariant1Subscribers / countVariant2Subscribers,
         greaterThanOrEqualTo(
-          (variant1.ratio / variant2.ratio) -
-              (1 - (sigma / expectedSubscribersCount)),
+          (variant1.ratio / variant2.ratio) - error,
         ),
       );
     });
