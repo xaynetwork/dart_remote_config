@@ -15,14 +15,64 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 ExperimentResult _$ExperimentResultFromJson(Map<String, dynamic> json) {
-  return _ExperimentInstance.fromJson(json);
+  switch (json['runtimeType']) {
+    case 'subscribed':
+      return ExperimentResultSubscribed.fromJson(json);
+    case 'notSubscribed':
+      return ExperimentResultNotSubscribed.fromJson(json);
+
+    default:
+      throw CheckedFromJsonException(json, 'runtimeType', 'ExperimentResult',
+          'Invalid union type "${json['runtimeType']}"!');
+  }
 }
 
 /// @nodoc
 mixin _$ExperimentResult {
   Experiment get experiment => throw _privateConstructorUsedError;
-  Variant get initialSelectedVariant => throw _privateConstructorUsedError;
-
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(
+            Experiment experiment, Variant initialSelectedVariant)
+        subscribed,
+    required TResult Function(Experiment experiment) notSubscribed,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult Function(Experiment experiment, Variant initialSelectedVariant)?
+        subscribed,
+    TResult Function(Experiment experiment)? notSubscribed,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(Experiment experiment, Variant initialSelectedVariant)?
+        subscribed,
+    TResult Function(Experiment experiment)? notSubscribed,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(ExperimentResultSubscribed value) subscribed,
+    required TResult Function(ExperimentResultNotSubscribed value)
+        notSubscribed,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult Function(ExperimentResultSubscribed value)? subscribed,
+    TResult Function(ExperimentResultNotSubscribed value)? notSubscribed,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(ExperimentResultSubscribed value)? subscribed,
+    TResult Function(ExperimentResultNotSubscribed value)? notSubscribed,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   $ExperimentResultCopyWith<ExperimentResult> get copyWith =>
@@ -34,7 +84,7 @@ abstract class $ExperimentResultCopyWith<$Res> {
   factory $ExperimentResultCopyWith(
           ExperimentResult value, $Res Function(ExperimentResult) then) =
       _$ExperimentResultCopyWithImpl<$Res>;
-  $Res call({Experiment experiment, Variant initialSelectedVariant});
+  $Res call({Experiment experiment});
 }
 
 /// @nodoc
@@ -49,48 +99,46 @@ class _$ExperimentResultCopyWithImpl<$Res>
   @override
   $Res call({
     Object? experiment = freezed,
-    Object? initialSelectedVariant = freezed,
   }) {
     return _then(_value.copyWith(
       experiment: experiment == freezed
           ? _value.experiment
           : experiment // ignore: cast_nullable_to_non_nullable
               as Experiment,
-      initialSelectedVariant: initialSelectedVariant == freezed
-          ? _value.initialSelectedVariant
-          : initialSelectedVariant // ignore: cast_nullable_to_non_nullable
-              as Variant,
     ));
   }
 }
 
 /// @nodoc
-abstract class _$$_ExperimentInstanceCopyWith<$Res>
+abstract class _$$ExperimentResultSubscribedCopyWith<$Res>
     implements $ExperimentResultCopyWith<$Res> {
-  factory _$$_ExperimentInstanceCopyWith(_$_ExperimentInstance value,
-          $Res Function(_$_ExperimentInstance) then) =
-      __$$_ExperimentInstanceCopyWithImpl<$Res>;
+  factory _$$ExperimentResultSubscribedCopyWith(
+          _$ExperimentResultSubscribed value,
+          $Res Function(_$ExperimentResultSubscribed) then) =
+      __$$ExperimentResultSubscribedCopyWithImpl<$Res>;
   @override
   $Res call({Experiment experiment, Variant initialSelectedVariant});
 }
 
 /// @nodoc
-class __$$_ExperimentInstanceCopyWithImpl<$Res>
+class __$$ExperimentResultSubscribedCopyWithImpl<$Res>
     extends _$ExperimentResultCopyWithImpl<$Res>
-    implements _$$_ExperimentInstanceCopyWith<$Res> {
-  __$$_ExperimentInstanceCopyWithImpl(
-      _$_ExperimentInstance _value, $Res Function(_$_ExperimentInstance) _then)
-      : super(_value, (v) => _then(v as _$_ExperimentInstance));
+    implements _$$ExperimentResultSubscribedCopyWith<$Res> {
+  __$$ExperimentResultSubscribedCopyWithImpl(
+      _$ExperimentResultSubscribed _value,
+      $Res Function(_$ExperimentResultSubscribed) _then)
+      : super(_value, (v) => _then(v as _$ExperimentResultSubscribed));
 
   @override
-  _$_ExperimentInstance get _value => super._value as _$_ExperimentInstance;
+  _$ExperimentResultSubscribed get _value =>
+      super._value as _$ExperimentResultSubscribed;
 
   @override
   $Res call({
     Object? experiment = freezed,
     Object? initialSelectedVariant = freezed,
   }) {
-    return _then(_$_ExperimentInstance(
+    return _then(_$ExperimentResultSubscribed(
       experiment: experiment == freezed
           ? _value.experiment
           : experiment // ignore: cast_nullable_to_non_nullable
@@ -105,28 +153,34 @@ class __$$_ExperimentInstanceCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_ExperimentInstance implements _ExperimentInstance {
-  const _$_ExperimentInstance(
-      {required this.experiment, required this.initialSelectedVariant});
+class _$ExperimentResultSubscribed implements ExperimentResultSubscribed {
+  const _$ExperimentResultSubscribed(
+      {required this.experiment,
+      required this.initialSelectedVariant,
+      final String? $type})
+      : $type = $type ?? 'subscribed';
 
-  factory _$_ExperimentInstance.fromJson(Map<String, dynamic> json) =>
-      _$$_ExperimentInstanceFromJson(json);
+  factory _$ExperimentResultSubscribed.fromJson(Map<String, dynamic> json) =>
+      _$$ExperimentResultSubscribedFromJson(json);
 
   @override
   final Experiment experiment;
   @override
   final Variant initialSelectedVariant;
 
+  @JsonKey(name: 'runtimeType')
+  final String $type;
+
   @override
   String toString() {
-    return 'ExperimentResult(experiment: $experiment, initialSelectedVariant: $initialSelectedVariant)';
+    return 'ExperimentResult.subscribed(experiment: $experiment, initialSelectedVariant: $initialSelectedVariant)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_ExperimentInstance &&
+            other is _$ExperimentResultSubscribed &&
             const DeepCollectionEquality()
                 .equals(other.experiment, experiment) &&
             const DeepCollectionEquality()
@@ -142,32 +196,265 @@ class _$_ExperimentInstance implements _ExperimentInstance {
 
   @JsonKey(ignore: true)
   @override
-  _$$_ExperimentInstanceCopyWith<_$_ExperimentInstance> get copyWith =>
-      __$$_ExperimentInstanceCopyWithImpl<_$_ExperimentInstance>(
-          this, _$identity);
+  _$$ExperimentResultSubscribedCopyWith<_$ExperimentResultSubscribed>
+      get copyWith => __$$ExperimentResultSubscribedCopyWithImpl<
+          _$ExperimentResultSubscribed>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(
+            Experiment experiment, Variant initialSelectedVariant)
+        subscribed,
+    required TResult Function(Experiment experiment) notSubscribed,
+  }) {
+    return subscribed(experiment, initialSelectedVariant);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult Function(Experiment experiment, Variant initialSelectedVariant)?
+        subscribed,
+    TResult Function(Experiment experiment)? notSubscribed,
+  }) {
+    return subscribed?.call(experiment, initialSelectedVariant);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(Experiment experiment, Variant initialSelectedVariant)?
+        subscribed,
+    TResult Function(Experiment experiment)? notSubscribed,
+    required TResult orElse(),
+  }) {
+    if (subscribed != null) {
+      return subscribed(experiment, initialSelectedVariant);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(ExperimentResultSubscribed value) subscribed,
+    required TResult Function(ExperimentResultNotSubscribed value)
+        notSubscribed,
+  }) {
+    return subscribed(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult Function(ExperimentResultSubscribed value)? subscribed,
+    TResult Function(ExperimentResultNotSubscribed value)? notSubscribed,
+  }) {
+    return subscribed?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(ExperimentResultSubscribed value)? subscribed,
+    TResult Function(ExperimentResultNotSubscribed value)? notSubscribed,
+    required TResult orElse(),
+  }) {
+    if (subscribed != null) {
+      return subscribed(this);
+    }
+    return orElse();
+  }
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_ExperimentInstanceToJson(this);
+    return _$$ExperimentResultSubscribedToJson(this);
   }
 }
 
-abstract class _ExperimentInstance implements ExperimentResult {
-  const factory _ExperimentInstance(
-      {required final Experiment experiment,
-      required final Variant initialSelectedVariant}) = _$_ExperimentInstance;
+abstract class ExperimentResultSubscribed implements ExperimentResult {
+  const factory ExperimentResultSubscribed(
+          {required final Experiment experiment,
+          required final Variant initialSelectedVariant}) =
+      _$ExperimentResultSubscribed;
 
-  factory _ExperimentInstance.fromJson(Map<String, dynamic> json) =
-      _$_ExperimentInstance.fromJson;
+  factory ExperimentResultSubscribed.fromJson(Map<String, dynamic> json) =
+      _$ExperimentResultSubscribed.fromJson;
+
+  @override
+  Experiment get experiment => throw _privateConstructorUsedError;
+  Variant get initialSelectedVariant => throw _privateConstructorUsedError;
+  @override
+  @JsonKey(ignore: true)
+  _$$ExperimentResultSubscribedCopyWith<_$ExperimentResultSubscribed>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$ExperimentResultNotSubscribedCopyWith<$Res>
+    implements $ExperimentResultCopyWith<$Res> {
+  factory _$$ExperimentResultNotSubscribedCopyWith(
+          _$ExperimentResultNotSubscribed value,
+          $Res Function(_$ExperimentResultNotSubscribed) then) =
+      __$$ExperimentResultNotSubscribedCopyWithImpl<$Res>;
+  @override
+  $Res call({Experiment experiment});
+}
+
+/// @nodoc
+class __$$ExperimentResultNotSubscribedCopyWithImpl<$Res>
+    extends _$ExperimentResultCopyWithImpl<$Res>
+    implements _$$ExperimentResultNotSubscribedCopyWith<$Res> {
+  __$$ExperimentResultNotSubscribedCopyWithImpl(
+      _$ExperimentResultNotSubscribed _value,
+      $Res Function(_$ExperimentResultNotSubscribed) _then)
+      : super(_value, (v) => _then(v as _$ExperimentResultNotSubscribed));
+
+  @override
+  _$ExperimentResultNotSubscribed get _value =>
+      super._value as _$ExperimentResultNotSubscribed;
+
+  @override
+  $Res call({
+    Object? experiment = freezed,
+  }) {
+    return _then(_$ExperimentResultNotSubscribed(
+      experiment: experiment == freezed
+          ? _value.experiment
+          : experiment // ignore: cast_nullable_to_non_nullable
+              as Experiment,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ExperimentResultNotSubscribed implements ExperimentResultNotSubscribed {
+  const _$ExperimentResultNotSubscribed(
+      {required this.experiment, final String? $type})
+      : $type = $type ?? 'notSubscribed';
+
+  factory _$ExperimentResultNotSubscribed.fromJson(Map<String, dynamic> json) =>
+      _$$ExperimentResultNotSubscribedFromJson(json);
+
+  @override
+  final Experiment experiment;
+
+  @JsonKey(name: 'runtimeType')
+  final String $type;
+
+  @override
+  String toString() {
+    return 'ExperimentResult.notSubscribed(experiment: $experiment)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ExperimentResultNotSubscribed &&
+            const DeepCollectionEquality()
+                .equals(other.experiment, experiment));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(experiment));
+
+  @JsonKey(ignore: true)
+  @override
+  _$$ExperimentResultNotSubscribedCopyWith<_$ExperimentResultNotSubscribed>
+      get copyWith => __$$ExperimentResultNotSubscribedCopyWithImpl<
+          _$ExperimentResultNotSubscribed>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(
+            Experiment experiment, Variant initialSelectedVariant)
+        subscribed,
+    required TResult Function(Experiment experiment) notSubscribed,
+  }) {
+    return notSubscribed(experiment);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult Function(Experiment experiment, Variant initialSelectedVariant)?
+        subscribed,
+    TResult Function(Experiment experiment)? notSubscribed,
+  }) {
+    return notSubscribed?.call(experiment);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(Experiment experiment, Variant initialSelectedVariant)?
+        subscribed,
+    TResult Function(Experiment experiment)? notSubscribed,
+    required TResult orElse(),
+  }) {
+    if (notSubscribed != null) {
+      return notSubscribed(experiment);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(ExperimentResultSubscribed value) subscribed,
+    required TResult Function(ExperimentResultNotSubscribed value)
+        notSubscribed,
+  }) {
+    return notSubscribed(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult Function(ExperimentResultSubscribed value)? subscribed,
+    TResult Function(ExperimentResultNotSubscribed value)? notSubscribed,
+  }) {
+    return notSubscribed?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(ExperimentResultSubscribed value)? subscribed,
+    TResult Function(ExperimentResultNotSubscribed value)? notSubscribed,
+    required TResult orElse(),
+  }) {
+    if (notSubscribed != null) {
+      return notSubscribed(this);
+    }
+    return orElse();
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ExperimentResultNotSubscribedToJson(this);
+  }
+}
+
+abstract class ExperimentResultNotSubscribed implements ExperimentResult {
+  const factory ExperimentResultNotSubscribed(
+      {required final Experiment experiment}) = _$ExperimentResultNotSubscribed;
+
+  factory ExperimentResultNotSubscribed.fromJson(Map<String, dynamic> json) =
+      _$ExperimentResultNotSubscribed.fromJson;
 
   @override
   Experiment get experiment => throw _privateConstructorUsedError;
   @override
-  Variant get initialSelectedVariant => throw _privateConstructorUsedError;
-  @override
   @JsonKey(ignore: true)
-  _$$_ExperimentInstanceCopyWith<_$_ExperimentInstance> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$ExperimentResultNotSubscribedCopyWith<_$ExperimentResultNotSubscribed>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 ExperimentationEngineResult _$ExperimentationEngineResultFromJson(
@@ -191,7 +478,7 @@ ExperimentationEngineResult _$ExperimentationEngineResultFromJson(
 mixin _$ExperimentationEngineResult {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(Set<ExperimentResult> subscribedExperiments,
+    required TResult Function(Set<ExperimentResult> computedExperiments,
             List<Feature> featuresDefinedInConfig)
         success,
     required TResult Function(
@@ -201,7 +488,7 @@ mixin _$ExperimentationEngineResult {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(Set<ExperimentResult> subscribedExperiments,
+    TResult Function(Set<ExperimentResult> computedExperiments,
             List<Feature> featuresDefinedInConfig)?
         success,
     TResult Function(ExperimentationEngineResultError error, String? message)?
@@ -210,7 +497,7 @@ mixin _$ExperimentationEngineResult {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(Set<ExperimentResult> subscribedExperiments,
+    TResult Function(Set<ExperimentResult> computedExperiments,
             List<Feature> featuresDefinedInConfig)?
         success,
     TResult Function(ExperimentationEngineResultError error, String? message)?
@@ -265,7 +552,7 @@ abstract class _$$ExperimentationEngineResultSuccessCopyWith<$Res> {
           $Res Function(_$ExperimentationEngineResultSuccess) then) =
       __$$ExperimentationEngineResultSuccessCopyWithImpl<$Res>;
   $Res call(
-      {Set<ExperimentResult> subscribedExperiments,
+      {Set<ExperimentResult> computedExperiments,
       List<Feature> featuresDefinedInConfig});
 }
 
@@ -284,13 +571,13 @@ class __$$ExperimentationEngineResultSuccessCopyWithImpl<$Res>
 
   @override
   $Res call({
-    Object? subscribedExperiments = freezed,
+    Object? computedExperiments = freezed,
     Object? featuresDefinedInConfig = freezed,
   }) {
     return _then(_$ExperimentationEngineResultSuccess(
-      subscribedExperiments == freezed
-          ? _value._subscribedExperiments
-          : subscribedExperiments // ignore: cast_nullable_to_non_nullable
+      computedExperiments == freezed
+          ? _value._computedExperiments
+          : computedExperiments // ignore: cast_nullable_to_non_nullable
               as Set<ExperimentResult>,
       featuresDefinedInConfig == freezed
           ? _value._featuresDefinedInConfig
@@ -305,10 +592,10 @@ class __$$ExperimentationEngineResultSuccessCopyWithImpl<$Res>
 class _$ExperimentationEngineResultSuccess
     implements ExperimentationEngineResultSuccess {
   const _$ExperimentationEngineResultSuccess(
-      final Set<ExperimentResult> subscribedExperiments,
+      final Set<ExperimentResult> computedExperiments,
       final List<Feature> featuresDefinedInConfig,
       {final String? $type})
-      : _subscribedExperiments = subscribedExperiments,
+      : _computedExperiments = computedExperiments,
         _featuresDefinedInConfig = featuresDefinedInConfig,
         $type = $type ?? 'success';
 
@@ -316,11 +603,11 @@ class _$ExperimentationEngineResultSuccess
           Map<String, dynamic> json) =>
       _$$ExperimentationEngineResultSuccessFromJson(json);
 
-  final Set<ExperimentResult> _subscribedExperiments;
+  final Set<ExperimentResult> _computedExperiments;
   @override
-  Set<ExperimentResult> get subscribedExperiments {
+  Set<ExperimentResult> get computedExperiments {
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableSetView(_subscribedExperiments);
+    return EqualUnmodifiableSetView(_computedExperiments);
   }
 
   final List<Feature> _featuresDefinedInConfig;
@@ -335,7 +622,7 @@ class _$ExperimentationEngineResultSuccess
 
   @override
   String toString() {
-    return 'ExperimentationEngineResult.success(subscribedExperiments: $subscribedExperiments, featuresDefinedInConfig: $featuresDefinedInConfig)';
+    return 'ExperimentationEngineResult.success(computedExperiments: $computedExperiments, featuresDefinedInConfig: $featuresDefinedInConfig)';
   }
 
   @override
@@ -344,7 +631,7 @@ class _$ExperimentationEngineResultSuccess
         (other.runtimeType == runtimeType &&
             other is _$ExperimentationEngineResultSuccess &&
             const DeepCollectionEquality()
-                .equals(other._subscribedExperiments, _subscribedExperiments) &&
+                .equals(other._computedExperiments, _computedExperiments) &&
             const DeepCollectionEquality().equals(
                 other._featuresDefinedInConfig, _featuresDefinedInConfig));
   }
@@ -353,7 +640,7 @@ class _$ExperimentationEngineResultSuccess
   @override
   int get hashCode => Object.hash(
       runtimeType,
-      const DeepCollectionEquality().hash(_subscribedExperiments),
+      const DeepCollectionEquality().hash(_computedExperiments),
       const DeepCollectionEquality().hash(_featuresDefinedInConfig));
 
   @JsonKey(ignore: true)
@@ -366,32 +653,32 @@ class _$ExperimentationEngineResultSuccess
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(Set<ExperimentResult> subscribedExperiments,
+    required TResult Function(Set<ExperimentResult> computedExperiments,
             List<Feature> featuresDefinedInConfig)
         success,
     required TResult Function(
             ExperimentationEngineResultError error, String? message)
         failure,
   }) {
-    return success(subscribedExperiments, featuresDefinedInConfig);
+    return success(computedExperiments, featuresDefinedInConfig);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(Set<ExperimentResult> subscribedExperiments,
+    TResult Function(Set<ExperimentResult> computedExperiments,
             List<Feature> featuresDefinedInConfig)?
         success,
     TResult Function(ExperimentationEngineResultError error, String? message)?
         failure,
   }) {
-    return success?.call(subscribedExperiments, featuresDefinedInConfig);
+    return success?.call(computedExperiments, featuresDefinedInConfig);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(Set<ExperimentResult> subscribedExperiments,
+    TResult Function(Set<ExperimentResult> computedExperiments,
             List<Feature> featuresDefinedInConfig)?
         success,
     TResult Function(ExperimentationEngineResultError error, String? message)?
@@ -399,7 +686,7 @@ class _$ExperimentationEngineResultSuccess
     required TResult orElse(),
   }) {
     if (success != null) {
-      return success(subscribedExperiments, featuresDefinedInConfig);
+      return success(computedExperiments, featuresDefinedInConfig);
     }
     return orElse();
   }
@@ -444,7 +731,7 @@ class _$ExperimentationEngineResultSuccess
 abstract class ExperimentationEngineResultSuccess
     implements ExperimentationEngineResult {
   const factory ExperimentationEngineResultSuccess(
-          final Set<ExperimentResult> subscribedExperiments,
+          final Set<ExperimentResult> computedExperiments,
           final List<Feature> featuresDefinedInConfig) =
       _$ExperimentationEngineResultSuccess;
 
@@ -452,7 +739,7 @@ abstract class ExperimentationEngineResultSuccess
           Map<String, dynamic> json) =
       _$ExperimentationEngineResultSuccess.fromJson;
 
-  Set<ExperimentResult> get subscribedExperiments =>
+  Set<ExperimentResult> get computedExperiments =>
       throw _privateConstructorUsedError;
   List<Feature> get featuresDefinedInConfig =>
       throw _privateConstructorUsedError;
@@ -553,7 +840,7 @@ class _$ExperimentationEngineResultFailure
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(Set<ExperimentResult> subscribedExperiments,
+    required TResult Function(Set<ExperimentResult> computedExperiments,
             List<Feature> featuresDefinedInConfig)
         success,
     required TResult Function(
@@ -566,7 +853,7 @@ class _$ExperimentationEngineResultFailure
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(Set<ExperimentResult> subscribedExperiments,
+    TResult Function(Set<ExperimentResult> computedExperiments,
             List<Feature> featuresDefinedInConfig)?
         success,
     TResult Function(ExperimentationEngineResultError error, String? message)?
@@ -578,7 +865,7 @@ class _$ExperimentationEngineResultFailure
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(Set<ExperimentResult> subscribedExperiments,
+    TResult Function(Set<ExperimentResult> computedExperiments,
             List<Feature> featuresDefinedInConfig)?
         success,
     TResult Function(ExperimentationEngineResultError error, String? message)?

@@ -12,3 +12,11 @@ extension CollectionExtension<T> on Iterable<T> {
 extension ExperimentResultSetExtestion on Set<ExperimentResult> {
   bool get hasExclusive => any((it) => it.experiment.exclusive);
 }
+
+extension StringExtestion on String {
+  String getSubstring(String matcher) {
+    final startIndex = indexOf(matcher);
+    final endIndex = indexOf(matcher, startIndex + matcher.length);
+    return substring(startIndex + matcher.length, endIndex);
+  }
+}

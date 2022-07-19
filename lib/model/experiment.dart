@@ -1,4 +1,5 @@
 import 'package:dart_remote_config/model/exceptions/remote_config_parser_exception.dart';
+import 'package:dart_remote_config/model/experimentation_engine_result.dart';
 import 'package:dart_remote_config/model/variant.dart';
 import 'package:equatable/equatable.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -76,4 +77,18 @@ class Experiment extends Equatable {
 
   @override
   List<Object> get props => [id];
+}
+
+extension ExperimentExtention on Experiment {
+  Set<String> get variantIds => variants
+      .map(
+        (it) =>
+            experimentIdMatcher +
+            id +
+            experimentIdMatcher +
+            variantIdMatcher +
+            it.id +
+            variantIdMatcher,
+      )
+      .toSet();
 }
