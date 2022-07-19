@@ -4,7 +4,11 @@ import 'package:dart_remote_config/model/variant.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'experimentation_engine_result.freezed.dart';
+
 part 'experimentation_engine_result.g.dart';
+
+const experimentIdMatcher = '%%';
+const variantIdMatcher = '%%';
 
 enum ExperimentationEngineResultError {
   errorWhileParsing,
@@ -13,27 +17,43 @@ enum ExperimentationEngineResultError {
 
 @freezed
 class ExperimentResult with _$ExperimentResult {
-  const factory ExperimentResult({
+  const factory ExperimentResult.subscribed({
     required Experiment experiment,
     required Variant initialSelectedVariant,
-  }) = _ExperimentInstance;
+  }) = ExperimentResultSubscribed;
+
+  const factory ExperimentResult.notSubscribed({
+    required Experiment experiment,
+  }) = ExperimentResultNotSubscribed;
 
   factory ExperimentResult.fromJson(Map<String, Object?> json) =>
       _$ExperimentResultFromJson(json);
 }
 
-extension ExperimentInstanceExtension on ExperimentResult {
+extension ExperimentResultExtension on ExperimentResult {
   bool get isConcluded => experiment.isConcluded;
 
-  Variant get selectedVariant => experiment.isConcluded
-      ? experiment.variants.single
-      : initialSelectedVariant;
+  Variant? get selectedVariant => mapOrNull(
+        subscribed: (subscribed) => experiment.isConcluded
+            ? experiment.variants.single
+            : subscribed.initialSelectedVariant,
+      );
+
+  String get variantId =>
+      experimentIdMatcher +
+      experiment.id +
+      experimentIdMatcher +
+      variantIdMatcher +
+      map(
+          subscribed: (s) => s.initialSelectedVariant.id,
+          notSubscribed: (ns) => '') +
+      variantIdMatcher;
 }
 
 @freezed
 class ExperimentationEngineResult with _$ExperimentationEngineResult {
   const factory ExperimentationEngineResult.success(
-    final Set<ExperimentResult> subscribedExperiments,
+    final Set<ExperimentResult> computedExperiments,
     final List<Feature> featuresDefinedInConfig,
   ) = ExperimentationEngineResultSuccess;
 
@@ -41,6 +61,7 @@ class ExperimentationEngineResult with _$ExperimentationEngineResult {
     required ExperimentationEngineResultError error,
     String? message,
   }) = ExperimentationEngineResultFailure;
+
   factory ExperimentationEngineResult.fromJson(Map<String, dynamic> json) =>
       _$ExperimentationEngineResultFromJson(json);
 }
@@ -48,10 +69,11 @@ class ExperimentationEngineResult with _$ExperimentationEngineResult {
 extension ExperimentationEngineResultSuccessExtension
     on ExperimentationEngineResultSuccess {
   Set<ExperimentResult> get activeExperiments =>
-      subscribedExperiments.where((e) => !e.isConcluded).toSet();
+      computedExperiments.where((e) => !e.isConcluded).toSet();
 
-  Set<Feature> get enabledFeatures => subscribedExperiments
-      .map((it) => it.selectedVariant.featureIds)
+  Set<Feature> get enabledFeatures => computedExperiments
+      .whereType<ExperimentResultSubscribed>()
+      .map((it) => it.selectedVariant?.featureIds ?? [])
       .expand((it) => it)
       .map(
         (it) => featuresDefinedInConfig.firstWhere(
@@ -60,4 +82,12 @@ extension ExperimentationEngineResultSuccessExtension
         ),
       )
       .toSet();
+
+  Set<String> get subscribedIds =>
+      activeExperiments.map((it) => it.variantId).toSet();
+}
+
+extension ExperimentationEngineResultExtension on ExperimentationEngineResult {
+  Set<String>? get subscribedIds =>
+      mapOrNull(success: (success) => success.subscribedIds);
 }

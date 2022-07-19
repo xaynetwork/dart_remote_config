@@ -17,23 +17,44 @@ class ExperimentationEngineImpl implements ExperimentationEngine {
     RemoteConfig config, [
     ExperimentationEngineResult? previousResult,
   ]) {
-    final newExperiments = config.experiments.where((it) => it.enabled).toSet();
+    late Set<ExperimentResult> previousResults;
+    late Set<ExperimentResult> newResults;
 
-    final results = <ExperimentResult>{};
+    final newExperiments = config.experiments.where((it) => it.enabled);
+
+    final notConcludedExperiments =
+        newExperiments.where((it) => !it.isConcluded).toSet();
+
+    final concludedResults = newExperiments
+        .where((it) => it.isConcluded)
+        .map(
+          (it) => ExperimentResult.subscribed(
+            experiment: it,
+            initialSelectedVariant: it.variants.single,
+          ),
+        )
+        .toSet();
 
     if (previousResult != null &&
         previousResult is ExperimentationEngineResultSuccess) {
       final previousExperiments = previousResult.activeExperiments;
       final experimentsToSkip =
-          _getResultsToSkip(previousExperiments, newExperiments);
-      final resultsToSkip = previousExperiments.where(
-        (it) => experimentsToSkip.contains(it),
-      );
-      newExperiments.removeAll(experimentsToSkip);
-      results.addAll(resultsToSkip);
+          _getResultsToSkip(previousExperiments, notConcludedExperiments);
+      notConcludedExperiments
+          .removeAll(experimentsToSkip.map((it) => it.experiment));
+      previousResults = experimentsToSkip;
     }
 
-    results.addAll(_maybeSubscribe(newExperiments, results.hasExclusive));
+    newResults = _maybeSubscribe(
+      notConcludedExperiments,
+      previousResults.hasExclusive,
+    );
+
+    final results = <ExperimentResult>{
+      ...concludedResults,
+      ...previousResults,
+      ...newResults
+    };
 
     return ExperimentationEngineResult.success(results, config.features);
   }
@@ -53,6 +74,8 @@ class ExperimentationEngineImpl implements ExperimentationEngine {
 
       if (isHit(experiment.size)) {
         results.add(_subscribeToSingleExperiment(experiment));
+      } else {
+        results.add(ExperimentResult.notSubscribed(experiment: experiment));
       }
     }
 
@@ -64,7 +87,7 @@ class ExperimentationEngineImpl implements ExperimentationEngine {
     final ratios = variants.map((it) => it.ratio.toDouble());
     final selectedVariant = randomChoice(variants, ratios);
 
-    return ExperimentResult(
+    return ExperimentResult.subscribed(
       experiment: experiment,
       initialSelectedVariant: selectedVariant,
     );
@@ -74,19 +97,24 @@ class ExperimentationEngineImpl implements ExperimentationEngine {
     Set<ExperimentResult> previousResults,
     Set<Experiment> nextExperiments,
   ) {
-    final Set<ExperimentResult> resultsToSkip = <ExperimentResult>{};
-    for (final result in previousResults) {
-      final prevExperiment = result.experiment;
-      if (nextExperiments.contains(prevExperiment)) {
-        final nextExperiment =
-            nextExperiments.firstWhere((it) => it == prevExperiment);
-        final variantExists =
-            nextExperiment.variants.contains(result.selectedVariant);
-        if (variantExists) {
-          resultsToSkip.add(result);
-        }
-      }
-    }
-    return resultsToSkip;
+    final notSubscribedToSkip = previousResults
+        .whereType<ExperimentResultNotSubscribed>()
+        .toSet()
+        .intersection(nextExperiments);
+
+    final subscribedToSkip = previousResults
+        .whereType<ExperimentResultSubscribed>()
+        .toSet()
+        .intersection(nextExperiments);
+
+    subscribedToSkip.retainWhere(
+      (it) =>
+          nextExperiments.expand((it) => it.variantIds).contains(it.variantId),
+    );
+
+    return {
+      ...notSubscribedToSkip,
+      ...subscribedToSkip,
+    };
   }
 }
