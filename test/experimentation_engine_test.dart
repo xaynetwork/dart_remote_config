@@ -8,6 +8,7 @@ import 'package:dart_remote_config/model/remote_config.dart';
 import 'package:dart_remote_config/model/remote_config_response.dart';
 import 'package:dart_remote_config/model/variant.dart';
 import 'package:dart_remote_config/remote_config_fetcher.dart';
+import 'package:dart_remote_config/utils/extensions.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:test/test.dart';
 
@@ -25,7 +26,7 @@ void main() {
   test('Fetching a config and running a successful experiment', () async {
     final config = await getRemoteConfig();
     final result = ExperimentationEngineImpl().computeResult(config);
-    expect(result, isA<ExperimentationEngineResultSuccess>());
+    expect(result.computedExperiments.length, greaterThan(0));
   });
 
   group('concluded experiments with single variant and size = 1', () {
@@ -52,15 +53,13 @@ void main() {
       expect(fakeUniVariantExperiment.type, ExperimentType.concluded);
 
       final result = ExperimentationEngineImpl().computeResult(fakeConfig);
-      expect(result, isA<ExperimentationEngineResultSuccess>());
-      final successfulResult = result as ExperimentationEngineResultSuccess;
-      expect(successfulResult.activeExperiments.length, 0);
-      expect(successfulResult.subscribedExperiments.length, 1);
-      expect(successfulResult.featuresDefinedInConfig.length, 0);
-      expect(successfulResult.enabledFeatures.length, 1);
-      expect(successfulResult.enabledFeatures.first.id, featureId);
+      expect(result.activeExperiments.length, 0);
+      expect(result.computedExperiments.length, 1);
+      expect(result.featuresDefinedInConfig.length, 0);
+      expect(result.enabledFeatures.length, 1);
+      expect(result.enabledFeatures.first.id, featureId);
       expect(
-        successfulResult.enabledFeatures.first.value,
+        result.enabledFeatures.first.value,
         const FeatureValue.nothing(),
       );
     });
@@ -102,30 +101,26 @@ void main() {
       expect(fakeUniVariantExperiment2.type, ExperimentType.concluded);
 
       final result = ExperimentationEngineImpl().computeResult(fakeConfig);
-      expect(result, isA<ExperimentationEngineResultSuccess>());
-      final successfulResult = result as ExperimentationEngineResultSuccess;
-      expect(successfulResult.activeExperiments.length, 0);
-      expect(successfulResult.subscribedExperiments.length, 2);
-      expect(successfulResult.featuresDefinedInConfig.length, 0);
-      expect(successfulResult.enabledFeatures.length, 2);
+      expect(result.activeExperiments.length, 0);
+      expect(result.computedExperiments.length, 2);
+      expect(result.featuresDefinedInConfig.length, 0);
+      expect(result.enabledFeatures.length, 2);
       expect(
-        successfulResult.enabledFeatures.map((it) => it.id).toSet().difference(
+        result.enabledFeatures.map((it) => it.id).toSet().difference(
           {featureId1, featureId2},
         ).isEmpty,
         true,
       );
       expect(
-        successfulResult.enabledFeatures
-            .map((it) => it.value)
-            .toSet()
-            .difference(
+        result.enabledFeatures.map((it) => it.value).toSet().difference(
           {const FeatureValue.nothing()},
         ).isEmpty,
         true,
       );
     });
+
     test(
-        'When multiple exclusive single variable concluded experiments with size=1, then subscribe to the first',
+        'When multiple exclusive single variable concluded experiments with size=1, then treat them as inclusive and subscribe to all',
         () async {
       const featureId1 = 'feature_1';
       const featureId2 = 'feature_2';
@@ -159,12 +154,10 @@ void main() {
       expect(fakeUniVariantExperiment2.type, ExperimentType.concluded);
 
       final result = ExperimentationEngineImpl().computeResult(fakeConfig);
-      expect(result, isA<ExperimentationEngineResultSuccess>());
-      final successfulResult = result as ExperimentationEngineResultSuccess;
-      expect(successfulResult.activeExperiments.length, 0);
-      expect(successfulResult.subscribedExperiments.length, 1);
-      expect(successfulResult.featuresDefinedInConfig.length, 0);
-      expect(successfulResult.enabledFeatures.length, 1);
+      expect(result.activeExperiments.length, 0);
+      expect(result.computedExperiments.length, 2);
+      expect(result.featuresDefinedInConfig.length, 0);
+      expect(result.enabledFeatures.length, 2);
     });
 
     test(
@@ -223,23 +216,18 @@ void main() {
       final result = ExperimentationEngineImpl().computeResult(
         fakeConfig,
       );
-      expect(result, isA<ExperimentationEngineResultSuccess>());
-      final successfulResult = result as ExperimentationEngineResultSuccess;
-      expect(successfulResult.activeExperiments.length, 0);
-      expect(successfulResult.subscribedExperiments.length, 3);
-      expect(successfulResult.featuresDefinedInConfig.length, 0);
-      expect(successfulResult.enabledFeatures.length, 3);
+      expect(result.activeExperiments.length, 0);
+      expect(result.computedExperiments.length, 3);
+      expect(result.featuresDefinedInConfig.length, 0);
+      expect(result.enabledFeatures.length, 3);
       expect(
-        successfulResult.enabledFeatures.map((it) => it.id).toSet().difference(
+        result.enabledFeatures.map((it) => it.id).toSet().difference(
           {featureId1, featureId2, featureId3},
         ).isEmpty,
         true,
       );
       expect(
-        successfulResult.enabledFeatures
-            .map((it) => it.value)
-            .toSet()
-            .difference(
+        result.enabledFeatures.map((it) => it.value).toSet().difference(
           {const FeatureValue.nothing()},
         ).isEmpty,
         true,
@@ -279,9 +267,8 @@ void main() {
 
       for (int i = 0; i < userCount; i++) {
         final result = ExperimentationEngineImpl().computeResult(fakeConfig);
-        expect(result, isA<ExperimentationEngineResultSuccess>());
-        final successfulResult = result as ExperimentationEngineResultSuccess;
-        if (successfulResult.subscribedExperiments
+        if (result.computedExperiments
+            .whereType<ExperimentResultSubscribed>()
             .map((it) => it.experiment)
             .contains(fakeUniVariantExperiment)) {
           countUsersSubscribed++;
@@ -292,11 +279,17 @@ void main() {
         countUsersSubscribed,
         greaterThanOrEqualTo(expectedSubscribersCount - sigma),
       );
+
+      expect(
+        countUsersSubscribed,
+        greaterThanOrEqualTo(expectedSubscribersCount - sigma),
+      );
       expect(
         countUsersSubscribed,
         lessThanOrEqualTo(expectedSubscribersCount + sigma),
       );
     });
+
     test(
         'when multiple exclusive rollouts with size 0.5, then half the user base subscribe to either one of them',
         () async {
@@ -341,10 +334,10 @@ void main() {
 
       for (int i = 0; i < userCount; i++) {
         final result = ExperimentationEngineImpl().computeResult(fakeConfig);
-        expect(result, isA<ExperimentationEngineResultSuccess>());
-        final successfulResult = result as ExperimentationEngineResultSuccess;
-        final experiments =
-            successfulResult.subscribedExperiments.map((it) => it.experiment);
+        final experiments = result.computedExperiments
+            .whereType<ExperimentResultSubscribed>()
+            .map((it) => it.experiment);
+
         if (experiments.contains(experiment1)) {
           subscribedUsersExperiment1++;
         }
@@ -370,6 +363,7 @@ void main() {
         lessThanOrEqualTo(expectedSubscribersCount2 + sigma),
       );
     });
+
     test(
         'when multiple inclusive rollouts with size 0.5, then half the user base subscribe to any one of them',
         () async {
@@ -416,10 +410,9 @@ void main() {
 
       for (int i = 0; i < userCount; i++) {
         final result = ExperimentationEngineImpl().computeResult(fakeConfig);
-        expect(result, isA<ExperimentationEngineResultSuccess>());
-        final successfulResult = result as ExperimentationEngineResultSuccess;
-        final experiments =
-            successfulResult.subscribedExperiments.map((it) => it.experiment);
+        final experiments = result.computedExperiments
+            .whereType<ExperimentResultSubscribed>()
+            .map((it) => it.experiment);
         if (experiments.contains(experiment1)) {
           subscribedUsersExperiment1++;
         }
@@ -484,31 +477,30 @@ void main() {
 
       expect(fakeUniVariantExperiment.type, ExperimentType.aBExperiment);
 
-      var countUsersSubscribed = 0;
+      var countUsersComputed = 0;
       var countVariant1Subscribers = 0;
       var countVariant2Subscribers = 0;
 
       for (int i = 0; i < userCount; i++) {
         final result = ExperimentationEngineImpl().computeResult(fakeConfig);
-        expect(result, isA<ExperimentationEngineResultSuccess>());
-        final successfulResult = result as ExperimentationEngineResultSuccess;
-        final experiments =
-            successfulResult.subscribedExperiments.map((it) => it.experiment);
+        final experiments = result.computedExperiments
+            .whereType<ExperimentResultSubscribed>()
+            .map((it) => it.experiment);
         if (experiments.contains(fakeUniVariantExperiment)) {
-          countUsersSubscribed++;
+          countUsersComputed++;
           final subscribedVariant =
-              successfulResult.subscribedExperiments.first.selectedVariant;
+              result.computedExperiments.first.selectedVariant;
           if (subscribedVariant == variant1) countVariant1Subscribers++;
           if (subscribedVariant == variant2) countVariant2Subscribers++;
         }
       }
 
       expect(
-        countUsersSubscribed,
+        countUsersComputed,
         greaterThanOrEqualTo(expectedSubscribersCount - sigma),
       );
       expect(
-        countUsersSubscribed,
+        countUsersComputed,
         lessThanOrEqualTo(expectedSubscribersCount + sigma),
       );
 

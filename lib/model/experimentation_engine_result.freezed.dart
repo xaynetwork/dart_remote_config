@@ -459,72 +459,20 @@ abstract class ExperimentResultNotSubscribed implements ExperimentResult {
 
 ExperimentationEngineResult _$ExperimentationEngineResultFromJson(
     Map<String, dynamic> json) {
-  switch (json['runtimeType']) {
-    case 'success':
-      return ExperimentationEngineResultSuccess.fromJson(json);
-    case 'failure':
-      return ExperimentationEngineResultFailure.fromJson(json);
-
-    default:
-      throw CheckedFromJsonException(
-          json,
-          'runtimeType',
-          'ExperimentationEngineResult',
-          'Invalid union type "${json['runtimeType']}"!');
-  }
+  return _ExperimentationEngineResult.fromJson(json);
 }
 
 /// @nodoc
 mixin _$ExperimentationEngineResult {
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(Set<ExperimentResult> computedExperiments,
-            List<Feature> featuresDefinedInConfig)
-        success,
-    required TResult Function(
-            ExperimentationEngineResultError error, String? message)
-        failure,
-  }) =>
+  Set<ExperimentResult> get computedExperiments =>
       throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(Set<ExperimentResult> computedExperiments,
-            List<Feature> featuresDefinedInConfig)?
-        success,
-    TResult Function(ExperimentationEngineResultError error, String? message)?
-        failure,
-  }) =>
+  List<Feature> get featuresDefinedInConfig =>
       throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(Set<ExperimentResult> computedExperiments,
-            List<Feature> featuresDefinedInConfig)?
-        success,
-    TResult Function(ExperimentationEngineResultError error, String? message)?
-        failure,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(ExperimentationEngineResultSuccess value) success,
-    required TResult Function(ExperimentationEngineResultFailure value) failure,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(ExperimentationEngineResultSuccess value)? success,
-    TResult Function(ExperimentationEngineResultFailure value)? failure,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(ExperimentationEngineResultSuccess value)? success,
-    TResult Function(ExperimentationEngineResultFailure value)? failure,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ExperimentationEngineResultCopyWith<ExperimentationEngineResult>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -533,6 +481,9 @@ abstract class $ExperimentationEngineResultCopyWith<$Res> {
           ExperimentationEngineResult value,
           $Res Function(ExperimentationEngineResult) then) =
       _$ExperimentationEngineResultCopyWithImpl<$Res>;
+  $Res call(
+      {Set<ExperimentResult> computedExperiments,
+      List<Feature> featuresDefinedInConfig});
 }
 
 /// @nodoc
@@ -543,38 +494,57 @@ class _$ExperimentationEngineResultCopyWithImpl<$Res>
   final ExperimentationEngineResult _value;
   // ignore: unused_field
   final $Res Function(ExperimentationEngineResult) _then;
-}
-
-/// @nodoc
-abstract class _$$ExperimentationEngineResultSuccessCopyWith<$Res> {
-  factory _$$ExperimentationEngineResultSuccessCopyWith(
-          _$ExperimentationEngineResultSuccess value,
-          $Res Function(_$ExperimentationEngineResultSuccess) then) =
-      __$$ExperimentationEngineResultSuccessCopyWithImpl<$Res>;
-  $Res call(
-      {Set<ExperimentResult> computedExperiments,
-      List<Feature> featuresDefinedInConfig});
-}
-
-/// @nodoc
-class __$$ExperimentationEngineResultSuccessCopyWithImpl<$Res>
-    extends _$ExperimentationEngineResultCopyWithImpl<$Res>
-    implements _$$ExperimentationEngineResultSuccessCopyWith<$Res> {
-  __$$ExperimentationEngineResultSuccessCopyWithImpl(
-      _$ExperimentationEngineResultSuccess _value,
-      $Res Function(_$ExperimentationEngineResultSuccess) _then)
-      : super(_value, (v) => _then(v as _$ExperimentationEngineResultSuccess));
-
-  @override
-  _$ExperimentationEngineResultSuccess get _value =>
-      super._value as _$ExperimentationEngineResultSuccess;
 
   @override
   $Res call({
     Object? computedExperiments = freezed,
     Object? featuresDefinedInConfig = freezed,
   }) {
-    return _then(_$ExperimentationEngineResultSuccess(
+    return _then(_value.copyWith(
+      computedExperiments: computedExperiments == freezed
+          ? _value.computedExperiments
+          : computedExperiments // ignore: cast_nullable_to_non_nullable
+              as Set<ExperimentResult>,
+      featuresDefinedInConfig: featuresDefinedInConfig == freezed
+          ? _value.featuresDefinedInConfig
+          : featuresDefinedInConfig // ignore: cast_nullable_to_non_nullable
+              as List<Feature>,
+    ));
+  }
+}
+
+/// @nodoc
+abstract class _$$_ExperimentationEngineResultCopyWith<$Res>
+    implements $ExperimentationEngineResultCopyWith<$Res> {
+  factory _$$_ExperimentationEngineResultCopyWith(
+          _$_ExperimentationEngineResult value,
+          $Res Function(_$_ExperimentationEngineResult) then) =
+      __$$_ExperimentationEngineResultCopyWithImpl<$Res>;
+  @override
+  $Res call(
+      {Set<ExperimentResult> computedExperiments,
+      List<Feature> featuresDefinedInConfig});
+}
+
+/// @nodoc
+class __$$_ExperimentationEngineResultCopyWithImpl<$Res>
+    extends _$ExperimentationEngineResultCopyWithImpl<$Res>
+    implements _$$_ExperimentationEngineResultCopyWith<$Res> {
+  __$$_ExperimentationEngineResultCopyWithImpl(
+      _$_ExperimentationEngineResult _value,
+      $Res Function(_$_ExperimentationEngineResult) _then)
+      : super(_value, (v) => _then(v as _$_ExperimentationEngineResult));
+
+  @override
+  _$_ExperimentationEngineResult get _value =>
+      super._value as _$_ExperimentationEngineResult;
+
+  @override
+  $Res call({
+    Object? computedExperiments = freezed,
+    Object? featuresDefinedInConfig = freezed,
+  }) {
+    return _then(_$_ExperimentationEngineResult(
       computedExperiments == freezed
           ? _value._computedExperiments
           : computedExperiments // ignore: cast_nullable_to_non_nullable
@@ -589,19 +559,15 @@ class __$$ExperimentationEngineResultSuccessCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$ExperimentationEngineResultSuccess
-    implements ExperimentationEngineResultSuccess {
-  const _$ExperimentationEngineResultSuccess(
+class _$_ExperimentationEngineResult implements _ExperimentationEngineResult {
+  const _$_ExperimentationEngineResult(
       final Set<ExperimentResult> computedExperiments,
-      final List<Feature> featuresDefinedInConfig,
-      {final String? $type})
+      final List<Feature> featuresDefinedInConfig)
       : _computedExperiments = computedExperiments,
-        _featuresDefinedInConfig = featuresDefinedInConfig,
-        $type = $type ?? 'success';
+        _featuresDefinedInConfig = featuresDefinedInConfig;
 
-  factory _$ExperimentationEngineResultSuccess.fromJson(
-          Map<String, dynamic> json) =>
-      _$$ExperimentationEngineResultSuccessFromJson(json);
+  factory _$_ExperimentationEngineResult.fromJson(Map<String, dynamic> json) =>
+      _$$_ExperimentationEngineResultFromJson(json);
 
   final Set<ExperimentResult> _computedExperiments;
   @override
@@ -617,19 +583,16 @@ class _$ExperimentationEngineResultSuccess
     return EqualUnmodifiableListView(_featuresDefinedInConfig);
   }
 
-  @JsonKey(name: 'runtimeType')
-  final String $type;
-
   @override
   String toString() {
-    return 'ExperimentationEngineResult.success(computedExperiments: $computedExperiments, featuresDefinedInConfig: $featuresDefinedInConfig)';
+    return 'ExperimentationEngineResult(computedExperiments: $computedExperiments, featuresDefinedInConfig: $featuresDefinedInConfig)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ExperimentationEngineResultSuccess &&
+            other is _$_ExperimentationEngineResult &&
             const DeepCollectionEquality()
                 .equals(other._computedExperiments, _computedExperiments) &&
             const DeepCollectionEquality().equals(
@@ -645,291 +608,34 @@ class _$ExperimentationEngineResultSuccess
 
   @JsonKey(ignore: true)
   @override
-  _$$ExperimentationEngineResultSuccessCopyWith<
-          _$ExperimentationEngineResultSuccess>
-      get copyWith => __$$ExperimentationEngineResultSuccessCopyWithImpl<
-          _$ExperimentationEngineResultSuccess>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(Set<ExperimentResult> computedExperiments,
-            List<Feature> featuresDefinedInConfig)
-        success,
-    required TResult Function(
-            ExperimentationEngineResultError error, String? message)
-        failure,
-  }) {
-    return success(computedExperiments, featuresDefinedInConfig);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(Set<ExperimentResult> computedExperiments,
-            List<Feature> featuresDefinedInConfig)?
-        success,
-    TResult Function(ExperimentationEngineResultError error, String? message)?
-        failure,
-  }) {
-    return success?.call(computedExperiments, featuresDefinedInConfig);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(Set<ExperimentResult> computedExperiments,
-            List<Feature> featuresDefinedInConfig)?
-        success,
-    TResult Function(ExperimentationEngineResultError error, String? message)?
-        failure,
-    required TResult orElse(),
-  }) {
-    if (success != null) {
-      return success(computedExperiments, featuresDefinedInConfig);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(ExperimentationEngineResultSuccess value) success,
-    required TResult Function(ExperimentationEngineResultFailure value) failure,
-  }) {
-    return success(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(ExperimentationEngineResultSuccess value)? success,
-    TResult Function(ExperimentationEngineResultFailure value)? failure,
-  }) {
-    return success?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(ExperimentationEngineResultSuccess value)? success,
-    TResult Function(ExperimentationEngineResultFailure value)? failure,
-    required TResult orElse(),
-  }) {
-    if (success != null) {
-      return success(this);
-    }
-    return orElse();
-  }
+  _$$_ExperimentationEngineResultCopyWith<_$_ExperimentationEngineResult>
+      get copyWith => __$$_ExperimentationEngineResultCopyWithImpl<
+          _$_ExperimentationEngineResult>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$ExperimentationEngineResultSuccessToJson(this);
+    return _$$_ExperimentationEngineResultToJson(this);
   }
 }
 
-abstract class ExperimentationEngineResultSuccess
+abstract class _ExperimentationEngineResult
     implements ExperimentationEngineResult {
-  const factory ExperimentationEngineResultSuccess(
+  const factory _ExperimentationEngineResult(
           final Set<ExperimentResult> computedExperiments,
           final List<Feature> featuresDefinedInConfig) =
-      _$ExperimentationEngineResultSuccess;
+      _$_ExperimentationEngineResult;
 
-  factory ExperimentationEngineResultSuccess.fromJson(
-          Map<String, dynamic> json) =
-      _$ExperimentationEngineResultSuccess.fromJson;
+  factory _ExperimentationEngineResult.fromJson(Map<String, dynamic> json) =
+      _$_ExperimentationEngineResult.fromJson;
 
+  @override
   Set<ExperimentResult> get computedExperiments =>
       throw _privateConstructorUsedError;
+  @override
   List<Feature> get featuresDefinedInConfig =>
       throw _privateConstructorUsedError;
+  @override
   @JsonKey(ignore: true)
-  _$$ExperimentationEngineResultSuccessCopyWith<
-          _$ExperimentationEngineResultSuccess>
-      get copyWith => throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class _$$ExperimentationEngineResultFailureCopyWith<$Res> {
-  factory _$$ExperimentationEngineResultFailureCopyWith(
-          _$ExperimentationEngineResultFailure value,
-          $Res Function(_$ExperimentationEngineResultFailure) then) =
-      __$$ExperimentationEngineResultFailureCopyWithImpl<$Res>;
-  $Res call({ExperimentationEngineResultError error, String? message});
-}
-
-/// @nodoc
-class __$$ExperimentationEngineResultFailureCopyWithImpl<$Res>
-    extends _$ExperimentationEngineResultCopyWithImpl<$Res>
-    implements _$$ExperimentationEngineResultFailureCopyWith<$Res> {
-  __$$ExperimentationEngineResultFailureCopyWithImpl(
-      _$ExperimentationEngineResultFailure _value,
-      $Res Function(_$ExperimentationEngineResultFailure) _then)
-      : super(_value, (v) => _then(v as _$ExperimentationEngineResultFailure));
-
-  @override
-  _$ExperimentationEngineResultFailure get _value =>
-      super._value as _$ExperimentationEngineResultFailure;
-
-  @override
-  $Res call({
-    Object? error = freezed,
-    Object? message = freezed,
-  }) {
-    return _then(_$ExperimentationEngineResultFailure(
-      error: error == freezed
-          ? _value.error
-          : error // ignore: cast_nullable_to_non_nullable
-              as ExperimentationEngineResultError,
-      message: message == freezed
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$ExperimentationEngineResultFailure
-    implements ExperimentationEngineResultFailure {
-  const _$ExperimentationEngineResultFailure(
-      {required this.error, this.message, final String? $type})
-      : $type = $type ?? 'failure';
-
-  factory _$ExperimentationEngineResultFailure.fromJson(
-          Map<String, dynamic> json) =>
-      _$$ExperimentationEngineResultFailureFromJson(json);
-
-  @override
-  final ExperimentationEngineResultError error;
-  @override
-  final String? message;
-
-  @JsonKey(name: 'runtimeType')
-  final String $type;
-
-  @override
-  String toString() {
-    return 'ExperimentationEngineResult.failure(error: $error, message: $message)';
-  }
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$ExperimentationEngineResultFailure &&
-            const DeepCollectionEquality().equals(other.error, error) &&
-            const DeepCollectionEquality().equals(other.message, message));
-  }
-
-  @JsonKey(ignore: true)
-  @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(error),
-      const DeepCollectionEquality().hash(message));
-
-  @JsonKey(ignore: true)
-  @override
-  _$$ExperimentationEngineResultFailureCopyWith<
-          _$ExperimentationEngineResultFailure>
-      get copyWith => __$$ExperimentationEngineResultFailureCopyWithImpl<
-          _$ExperimentationEngineResultFailure>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(Set<ExperimentResult> computedExperiments,
-            List<Feature> featuresDefinedInConfig)
-        success,
-    required TResult Function(
-            ExperimentationEngineResultError error, String? message)
-        failure,
-  }) {
-    return failure(error, message);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(Set<ExperimentResult> computedExperiments,
-            List<Feature> featuresDefinedInConfig)?
-        success,
-    TResult Function(ExperimentationEngineResultError error, String? message)?
-        failure,
-  }) {
-    return failure?.call(error, message);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(Set<ExperimentResult> computedExperiments,
-            List<Feature> featuresDefinedInConfig)?
-        success,
-    TResult Function(ExperimentationEngineResultError error, String? message)?
-        failure,
-    required TResult orElse(),
-  }) {
-    if (failure != null) {
-      return failure(error, message);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(ExperimentationEngineResultSuccess value) success,
-    required TResult Function(ExperimentationEngineResultFailure value) failure,
-  }) {
-    return failure(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(ExperimentationEngineResultSuccess value)? success,
-    TResult Function(ExperimentationEngineResultFailure value)? failure,
-  }) {
-    return failure?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(ExperimentationEngineResultSuccess value)? success,
-    TResult Function(ExperimentationEngineResultFailure value)? failure,
-    required TResult orElse(),
-  }) {
-    if (failure != null) {
-      return failure(this);
-    }
-    return orElse();
-  }
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$ExperimentationEngineResultFailureToJson(this);
-  }
-}
-
-abstract class ExperimentationEngineResultFailure
-    implements ExperimentationEngineResult {
-  const factory ExperimentationEngineResultFailure(
-      {required final ExperimentationEngineResultError error,
-      final String? message}) = _$ExperimentationEngineResultFailure;
-
-  factory ExperimentationEngineResultFailure.fromJson(
-          Map<String, dynamic> json) =
-      _$ExperimentationEngineResultFailure.fromJson;
-
-  ExperimentationEngineResultError get error =>
-      throw _privateConstructorUsedError;
-  String? get message => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  _$$ExperimentationEngineResultFailureCopyWith<
-          _$ExperimentationEngineResultFailure>
+  _$$_ExperimentationEngineResultCopyWith<_$_ExperimentationEngineResult>
       get copyWith => throw _privateConstructorUsedError;
 }
