@@ -1,10 +1,8 @@
 import 'package:dart_remote_config/experimentation/experimentation_engine.dart';
 import 'package:dart_remote_config/model/experimentation_engine_result.dart';
 import 'package:dart_remote_config/model/remote_config.dart';
-import 'package:hive/hive.dart';
-
-const _kExperimentationBoxKey = 'ExperimentationBox';
-const _kExperimentationResultKey = 'ExperimentationResult';
+import 'package:dart_remote_config/repository/remote_config_repository.dart';
+import 'package:dart_remote_config/utils/extensions.dart';
 
 abstract class ExperimentationModule {
   Future<ExperimentationEngineResult> fetch(RemoteConfig config);
@@ -12,27 +10,13 @@ abstract class ExperimentationModule {
 
 class ExperimentsFetcherImpl implements ExperimentationModule {
   final ExperimentationEngine _engine = ExperimentationEngineImpl();
+  final RemoteConfigRepository _repository = RemoteConfigRepositoryImpl();
 
   @override
   Future<ExperimentationEngineResult> fetch(RemoteConfig config) async {
-    final previousResult = await readPreviousResult();
-
-    ///      previousResult.subscribedIds;
-    final newResult = _engine.computeResult(config, previousResult);
-    await writeResult(newResult);
+    final subscribedVariantIds = await _repository.readSubscribedVariantIds();
+    final newResult = _engine.computeResult(config, subscribedVariantIds);
+    await _repository.saveSubscribedVariantsIds(newResult.subscribedVariantIds);
     return newResult;
-  }
-
-  Future<void> writeResult(ExperimentationEngineResult result) async {
-    final box = await Hive.openLazyBox(_kExperimentationBoxKey);
-    await box.put(_kExperimentationResultKey, result.toJson());
-  }
-
-  Future<ExperimentationEngineResult?> readPreviousResult() async {
-    final box = await Hive.openLazyBox(_kExperimentationBoxKey);
-    final jsonMap =
-        await box.get(_kExperimentationResultKey) as Map<String, dynamic>?;
-    if (jsonMap == null) return null;
-    return ExperimentationEngineResult.fromJson(jsonMap);
   }
 }

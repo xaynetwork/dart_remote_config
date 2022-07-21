@@ -36,44 +36,20 @@ Map<String, dynamic> _$$ExperimentResultNotSubscribedToJson(
       'runtimeType': instance.$type,
     };
 
-_$ExperimentationEngineResultSuccess
-    _$$ExperimentationEngineResultSuccessFromJson(Map<String, dynamic> json) =>
-        _$ExperimentationEngineResultSuccess(
-          (json['computedExperiments'] as List<dynamic>)
-              .map((e) => ExperimentResult.fromJson(e as Map<String, dynamic>))
-              .toSet(),
-          (json['featuresDefinedInConfig'] as List<dynamic>)
-              .map((e) => Feature.fromJson(e))
-              .toList(),
-          $type: json['runtimeType'] as String?,
-        );
+_$_ExperimentationEngineResult _$$_ExperimentationEngineResultFromJson(
+        Map<String, dynamic> json) =>
+    _$_ExperimentationEngineResult(
+      (json['computedExperiments'] as List<dynamic>)
+          .map((e) => ExperimentResult.fromJson(e as Map<String, dynamic>))
+          .toSet(),
+      (json['featuresDefinedInConfig'] as List<dynamic>)
+          .map((e) => Feature.fromJson(e))
+          .toList(),
+    );
 
-Map<String, dynamic> _$$ExperimentationEngineResultSuccessToJson(
-        _$ExperimentationEngineResultSuccess instance) =>
+Map<String, dynamic> _$$_ExperimentationEngineResultToJson(
+        _$_ExperimentationEngineResult instance) =>
     <String, dynamic>{
       'computedExperiments': instance.computedExperiments.toList(),
       'featuresDefinedInConfig': instance.featuresDefinedInConfig,
-      'runtimeType': instance.$type,
     };
-
-_$ExperimentationEngineResultFailure
-    _$$ExperimentationEngineResultFailureFromJson(Map<String, dynamic> json) =>
-        _$ExperimentationEngineResultFailure(
-          error: $enumDecode(
-              _$ExperimentationEngineResultErrorEnumMap, json['error']),
-          message: json['message'] as String?,
-          $type: json['runtimeType'] as String?,
-        );
-
-Map<String, dynamic> _$$ExperimentationEngineResultFailureToJson(
-        _$ExperimentationEngineResultFailure instance) =>
-    <String, dynamic>{
-      'error': _$ExperimentationEngineResultErrorEnumMap[instance.error],
-      'message': instance.message,
-      'runtimeType': instance.$type,
-    };
-
-const _$ExperimentationEngineResultErrorEnumMap = {
-  ExperimentationEngineResultError.errorWhileParsing: 'errorWhileParsing',
-  ExperimentationEngineResultError.errorNoData: 'errorNoData',
-};

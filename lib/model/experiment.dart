@@ -79,16 +79,7 @@ class Experiment extends Equatable {
   List<Object> get props => [id];
 }
 
-extension ExperimentExtention on Experiment {
-  Set<String> get variantIds => variants
-      .map(
-        (it) =>
-            experimentIdMatcher +
-            id +
-            experimentIdMatcher +
-            variantIdMatcher +
-            it.id +
-            variantIdMatcher,
-      )
-      .toSet();
+extension ExperimentExtension on Experiment {
+  Set<ExperimentIdAndVariantId> get getVariantIds =>
+      variants.map((it) => ExperimentIdAndVariantId(id, it.id)).toSet();
 }
