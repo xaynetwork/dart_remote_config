@@ -13,6 +13,9 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:test/test.dart';
 
 void main() {
+  const numTries = 1000;
+  final error = sqrt(pow(numTries, 2) / 12);
+
   Future<RemoteConfig> getRemoteConfig() async {
     final config =
         await FileRemoteConfigFetcher('test/valid_rconfig.yaml').fetch();
@@ -240,9 +243,7 @@ void main() {
         'when a single rollout with size 0.5, then half the user base subscribe',
         () async {
       const size = 0.5;
-      const userCount = 1000;
-      const expectedSubscribersCount = userCount * size;
-      final sigma = sqrt(pow(userCount, 2) / 12);
+      const expectedSubscribersCount = numTries * size;
 
       const featureId = 'feature_1';
       const fakeUniVariantExperiment = Experiment(
@@ -265,7 +266,7 @@ void main() {
 
       var countUsersSubscribed = 0;
 
-      for (int i = 0; i < userCount; i++) {
+      for (int i = 0; i < numTries; i++) {
         final result = ExperimentationEngineImpl().computeResult(fakeConfig);
         if (result.computedExperiments
             .whereType<ExperimentResultSubscribed>()
@@ -277,16 +278,7 @@ void main() {
 
       expect(
         countUsersSubscribed,
-        greaterThanOrEqualTo(expectedSubscribersCount - sigma),
-      );
-
-      expect(
-        countUsersSubscribed,
-        greaterThanOrEqualTo(expectedSubscribersCount - sigma),
-      );
-      expect(
-        countUsersSubscribed,
-        lessThanOrEqualTo(expectedSubscribersCount + sigma),
+        closeTo(expectedSubscribersCount, error),
       );
     });
 
@@ -295,10 +287,8 @@ void main() {
         () async {
       const size1 = 0.2;
       const size2 = 0.7;
-      const userCount = 1000;
-      const expectedSubscribersCount1 = userCount * size1;
-      const expectedSubscribersCount2 = userCount * size2;
-      final sigma = sqrt(pow(userCount, 2) / 12);
+      const expectedSubscribersCount1 = numTries * size1;
+      const expectedSubscribersCount2 = numTries * size2;
 
       const experiment1 = Experiment(
         id: 'experiment1',
@@ -332,7 +322,7 @@ void main() {
       var subscribedUsersExperiment1 = 0;
       var subscribedUsersExperiment2 = 0;
 
-      for (int i = 0; i < userCount; i++) {
+      for (int i = 0; i < numTries; i++) {
         final result = ExperimentationEngineImpl().computeResult(fakeConfig);
         final experiments = result.computedExperiments
             .whereType<ExperimentResultSubscribed>()
@@ -348,19 +338,11 @@ void main() {
 
       expect(
         subscribedUsersExperiment1,
-        greaterThanOrEqualTo(expectedSubscribersCount1 - sigma),
-      );
-      expect(
-        subscribedUsersExperiment1,
-        lessThanOrEqualTo(expectedSubscribersCount1 + sigma),
+        closeTo(expectedSubscribersCount1, error),
       );
       expect(
         subscribedUsersExperiment2,
-        greaterThanOrEqualTo(expectedSubscribersCount2 - sigma),
-      );
-      expect(
-        subscribedUsersExperiment2,
-        lessThanOrEqualTo(expectedSubscribersCount2 + sigma),
+        closeTo(expectedSubscribersCount2, error),
       );
     });
 
@@ -369,10 +351,8 @@ void main() {
         () async {
       const size1 = 0.2;
       const size2 = 0.7;
-      const userCount = 1000;
-      const expectedSubscribersCount1 = userCount * size1;
-      const expectedSubscribersCount2 = userCount * size2;
-      final sigma = sqrt(pow(userCount, 2) / 12);
+      const expectedSubscribersCount1 = numTries * size1;
+      const expectedSubscribersCount2 = numTries * size2;
 
       const experiment1 = Experiment(
         id: 'experiment1',
@@ -408,7 +388,7 @@ void main() {
       var subscribedUsersExperiment1 = 0;
       var subscribedUsersExperiment2 = 0;
 
-      for (int i = 0; i < userCount; i++) {
+      for (int i = 0; i < numTries; i++) {
         final result = ExperimentationEngineImpl().computeResult(fakeConfig);
         final experiments = result.computedExperiments
             .whereType<ExperimentResultSubscribed>()
@@ -423,19 +403,12 @@ void main() {
 
       expect(
         subscribedUsersExperiment1,
-        greaterThanOrEqualTo(expectedSubscribersCount1 - sigma),
+        closeTo(expectedSubscribersCount1, error),
       );
-      expect(
-        subscribedUsersExperiment1,
-        lessThanOrEqualTo(expectedSubscribersCount1 + sigma),
-      );
+
       expect(
         subscribedUsersExperiment2,
-        greaterThanOrEqualTo(expectedSubscribersCount2 - sigma),
-      );
-      expect(
-        subscribedUsersExperiment2,
-        lessThanOrEqualTo(expectedSubscribersCount2 + sigma),
+        closeTo(expectedSubscribersCount2, error),
       );
     });
   });
@@ -445,9 +418,7 @@ void main() {
         'when a single experiment with size < 1, and more than one variant then a portion of the user base will subscribe to different variants',
         () async {
       const size = 0.3;
-      const userCount = 1000;
-      const expectedSubscribersCount = userCount * size;
-      final sigma = sqrt(pow(userCount, 2) / 12);
+      const expectedSubscribersCount = numTries * size;
 
       const variant1 = Variant(
         id: 'variant_1',
@@ -481,7 +452,7 @@ void main() {
       var countVariant1Subscribers = 0;
       var countVariant2Subscribers = 0;
 
-      for (int i = 0; i < userCount; i++) {
+      for (int i = 0; i < numTries; i++) {
         final result = ExperimentationEngineImpl().computeResult(fakeConfig);
         final experiments = result.computedExperiments
             .whereType<ExperimentResultSubscribed>()
@@ -497,28 +468,19 @@ void main() {
 
       expect(
         countUsersComputed,
-        greaterThanOrEqualTo(expectedSubscribersCount - sigma),
-      );
-      expect(
-        countUsersComputed,
-        lessThanOrEqualTo(expectedSubscribersCount + sigma),
+        closeTo(expectedSubscribersCount, error),
       );
 
       final sigmaActualSubscribers =
           sqrt(pow(countVariant1Subscribers, 2) / 12);
-      final error = 1 - (sigmaActualSubscribers / expectedSubscribersCount);
+      final variantError =
+          1 - (sigmaActualSubscribers / expectedSubscribersCount);
 
       expect(
         countVariant1Subscribers / countVariant2Subscribers,
-        lessThanOrEqualTo(
-          (variant1.ratio / variant2.ratio) + error,
-        ),
-      );
-
-      expect(
-        countVariant1Subscribers / countVariant2Subscribers,
-        greaterThanOrEqualTo(
-          (variant1.ratio / variant2.ratio) - error,
+        closeTo(
+          variant1.ratio / variant2.ratio,
+          variantError,
         ),
       );
     });
