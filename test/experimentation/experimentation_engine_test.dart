@@ -14,7 +14,7 @@ import 'package:test/test.dart';
 
 void main() {
   const numTries = 1000;
-  final error = sqrt(pow(numTries, 2) / 12);
+  const error = numTries * 0.09;
 
   group('Fetching remote config and passing it to experimentation engine', () {
     Future<RemoteConfig> getRemoteConfig() async {
@@ -474,7 +474,7 @@ void main() {
       );
 
       final sigmaActualSubscribers =
-          sqrt(pow(countVariant1Subscribers, 2) / 12);
+          sqrt(pow(countVariant1Subscribers / 2, 2) / 12);
       final variantError =
           1 - (sigmaActualSubscribers / expectedSubscribersCount);
 
