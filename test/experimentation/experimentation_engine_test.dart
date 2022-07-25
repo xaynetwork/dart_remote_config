@@ -16,20 +16,22 @@ void main() {
   const numTries = 1000;
   final error = sqrt(pow(numTries, 2) / 12);
 
-  Future<RemoteConfig> getRemoteConfig() async {
-    final config =
-        await FileRemoteConfigFetcher('test/valid_rconfig.yaml').fetch();
-    expect(config, isA<RemoteConfigResponseSuccess>());
-    final fetchedConfig =
-        (config as RemoteConfigResponseSuccess).remoteConfigs.configs.first;
-    expect(fetchedConfig, isNotNull);
-    return fetchedConfig;
-  }
+  group('Fetching remote config and passing it to experimentation engine', () {
+    Future<RemoteConfig> getRemoteConfig() async {
+      final config =
+          await FileRemoteConfigFetcher('test/valid_rconfig.yaml').fetch();
+      expect(config, isA<RemoteConfigResponseSuccess>());
+      final fetchedConfig =
+          (config as RemoteConfigResponseSuccess).remoteConfigs.configs.first;
+      expect(fetchedConfig, isNotNull);
+      return fetchedConfig;
+    }
 
-  test('Fetching a config and running a successful experiment', () async {
-    final config = await getRemoteConfig();
-    final result = ExperimentationEngineImpl().computeResult(config);
-    expect(result.computedExperiments.length, greaterThan(0));
+    test('Fetching a config and running a successful experiment', () async {
+      final config = await getRemoteConfig();
+      final result = ExperimentationEngineImpl().computeResult(config);
+      expect(result.computedExperiments.length, greaterThan(0));
+    });
   });
 
   group('concluded experiments with single variant and size = 1', () {
@@ -38,7 +40,7 @@ void main() {
         () async {
       const featureId = 'feature_1';
       const fakeUniVariantExperiment = Experiment(
-        id: 'experiment1',
+        id: 'alreadySubscribedExperiment',
         size: 1,
         variants: [
           Variant(
@@ -73,7 +75,7 @@ void main() {
       const featureId1 = 'feature_1';
       const featureId2 = 'feature_2';
       const fakeUniVariantExperiment1 = Experiment(
-        id: 'experiment1',
+        id: 'alreadySubscribedExperiment',
         size: 1,
         exclusive: false,
         variants: [
@@ -84,7 +86,7 @@ void main() {
         ],
       );
       const fakeUniVariantExperiment2 = Experiment(
-        id: 'experiment2',
+        id: 'newExperiment',
         size: 1,
         exclusive: false,
         variants: [
@@ -128,7 +130,7 @@ void main() {
       const featureId1 = 'feature_1';
       const featureId2 = 'feature_2';
       const fakeUniVariantExperiment1 = Experiment(
-        id: 'experiment1',
+        id: 'alreadySubscribedExperiment',
         size: 1,
         variants: [
           Variant(
@@ -138,7 +140,7 @@ void main() {
         ],
       );
       const fakeUniVariantExperiment2 = Experiment(
-        id: 'experiment2',
+        id: 'newExperiment',
         size: 1,
         variants: [
           Variant(
@@ -170,7 +172,7 @@ void main() {
       const featureId2 = 'feature_2';
       const featureId3 = 'feature_3';
       const fakeUniVariantExperiment1 = Experiment(
-        id: 'experiment1',
+        id: 'alreadySubscribedExperiment',
         size: 1,
         variants: [
           Variant(
@@ -180,7 +182,7 @@ void main() {
         ],
       );
       const fakeUniVariantExperiment2 = Experiment(
-        id: 'experiment2',
+        id: 'newExperiment',
         size: 1,
         exclusive: false,
         variants: [
@@ -247,7 +249,7 @@ void main() {
 
       const featureId = 'feature_1';
       const fakeUniVariantExperiment = Experiment(
-        id: 'experiment1',
+        id: 'alreadySubscribedExperiment',
         size: size,
         variants: [
           Variant(
@@ -291,7 +293,7 @@ void main() {
       const expectedSubscribersCount2 = numTries * size2;
 
       const experiment1 = Experiment(
-        id: 'experiment1',
+        id: 'alreadySubscribedExperiment',
         size: size1,
         variants: [
           Variant(
@@ -301,7 +303,7 @@ void main() {
         ],
       );
       const experiment2 = Experiment(
-        id: 'experiment2',
+        id: 'newExperiment',
         size: size2,
         variants: [
           Variant(
@@ -355,7 +357,7 @@ void main() {
       const expectedSubscribersCount2 = numTries * size2;
 
       const experiment1 = Experiment(
-        id: 'experiment1',
+        id: 'alreadySubscribedExperiment',
         exclusive: false,
         size: size1,
         variants: [
@@ -366,7 +368,7 @@ void main() {
         ],
       );
       const experiment2 = Experiment(
-        id: 'experiment2',
+        id: 'newExperiment',
         exclusive: false,
         size: size2,
         variants: [
@@ -432,8 +434,8 @@ void main() {
         featureIds: ['feature_2'],
       );
 
-      const fakeUniVariantExperiment = Experiment(
-        id: 'experiment1',
+      const fakeMultiVariantExperiment = Experiment(
+        id: 'alreadySubscribedExperiment',
         size: size,
         variants: [
           variant1,
@@ -443,10 +445,10 @@ void main() {
 
       final RemoteConfig fakeConfig = RemoteConfig(
         appVersion: VersionConstraint.any,
-        experiments: [fakeUniVariantExperiment],
+        experiments: [fakeMultiVariantExperiment],
       );
 
-      expect(fakeUniVariantExperiment.type, ExperimentType.aBExperiment);
+      expect(fakeMultiVariantExperiment.type, ExperimentType.aBExperiment);
 
       var countUsersComputed = 0;
       var countVariant1Subscribers = 0;
@@ -457,7 +459,7 @@ void main() {
         final experiments = result.computedExperiments
             .whereType<ExperimentResultSubscribed>()
             .map((it) => it.experiment);
-        if (experiments.contains(fakeUniVariantExperiment)) {
+        if (experiments.contains(fakeMultiVariantExperiment)) {
           countUsersComputed++;
           final subscribedVariant =
               result.computedExperiments.first.selectedVariant;
@@ -482,6 +484,268 @@ void main() {
           variant1.ratio / variant2.ratio,
           variantError,
         ),
+      );
+    });
+  });
+
+  group('passing previous subscribedVariantIds to experimentation engine', () {
+    test(
+        'When passing previous subscribedVariantIds, user will subscribe to it again',
+        () async {
+      const size = 0.3;
+      const expectedSubscribersCount = numTries * size;
+
+      Variant _getVariant(int index) => Variant(
+            id: 'variant_$index',
+            ratio: index + 2,
+            featureIds: ['feature_$index'],
+          );
+
+      /// Already subscribed
+      final alreadySubscribedExperiment = Experiment(
+        id: 'alreadySubscribedExperiment',
+        size: size,
+        variants: [
+          _getVariant(1),
+          _getVariant(2),
+        ],
+      );
+
+      /// Won't subscribe since it's exclusive
+      final exclusiveExperiment = Experiment(
+        id: 'newExperiment',
+        size: size,
+        variants: [
+          _getVariant(3),
+          _getVariant(4),
+        ],
+      );
+
+      /// May subscribe since it's inclusive
+      final inclusiveExperiment = Experiment(
+        id: 'inclusiveExperiment',
+        exclusive: false,
+        size: size,
+        variants: [
+          _getVariant(5),
+          _getVariant(6),
+        ],
+      );
+
+      /// Will always subscribe since it's concluded
+      const concludedExperiment = Experiment(
+        id: 'concludedExperiment',
+        exclusive: false,
+        size: 1,
+        variants: [
+          Variant(
+            id: 'variant_concluded',
+            featureIds: ['feature_concluded'],
+          )
+        ],
+      );
+
+      final RemoteConfig fakeConfig = RemoteConfig(
+        appVersion: VersionConstraint.any,
+        experiments: [
+          alreadySubscribedExperiment,
+          exclusiveExperiment,
+          inclusiveExperiment,
+          concludedExperiment,
+        ],
+      );
+
+      final subscribedVariantId = alreadySubscribedExperiment.variants.first.id;
+      final subscribedVariantIds = <ExperimentIdAndVariantId>{
+        ExperimentIdAndVariantId(
+          alreadySubscribedExperiment.id,
+          subscribedVariantId,
+        ),
+      };
+
+      expect(alreadySubscribedExperiment.type, ExperimentType.aBExperiment);
+      expect(exclusiveExperiment.type, ExperimentType.aBExperiment);
+      expect(inclusiveExperiment.type, ExperimentType.aBExperiment);
+      expect(concludedExperiment.type, ExperimentType.concluded);
+
+      var countAlreadySubscribedExperimentComputed = 0;
+      var countInclusiveExperimentComputed = 0;
+      var countExclusiveExperimentComputed = 0;
+      var countConcludedExperimentComputed = 0;
+      var countAlreadySubscribedExperimentVariant1Subscribers = 0;
+      var countInclusiveVariant1Subscribers = 0;
+      var countInclusiveVariant2Subscribers = 0;
+
+      for (int i = 0; i < numTries; i++) {
+        final result = ExperimentationEngineImpl().computeResult(
+          fakeConfig,
+          subscribedVariantIds,
+        );
+        final experiments = result.computedExperiments
+            .whereType<ExperimentResultSubscribed>()
+            .map((it) => it.experiment);
+        if (experiments.contains(alreadySubscribedExperiment)) {
+          countAlreadySubscribedExperimentComputed++;
+          final actualSubscribedVariant = result.computedExperiments
+              .firstWhere(
+                (it) => it.experiment == alreadySubscribedExperiment,
+              )
+              .selectedVariant!
+              .id;
+          if (actualSubscribedVariant == subscribedVariantId) {
+            countAlreadySubscribedExperimentVariant1Subscribers++;
+          }
+        }
+
+        if (experiments.contains(exclusiveExperiment)) {
+          countExclusiveExperimentComputed++;
+        }
+
+        if (experiments.contains(inclusiveExperiment)) {
+          countInclusiveExperimentComputed++;
+          final subscribedVariant = result.computedExperiments
+              .firstWhere(
+                (it) => it.experiment == inclusiveExperiment,
+              )
+              .selectedVariant;
+          if (subscribedVariant == inclusiveExperiment.variants.first) {
+            countInclusiveVariant1Subscribers++;
+          } else {
+            countInclusiveVariant2Subscribers++;
+          }
+        }
+
+        if (experiments.contains(concludedExperiment)) {
+          countConcludedExperimentComputed++;
+        }
+      }
+
+      /// User remains subscribed to their variant
+      expect(
+        countAlreadySubscribedExperimentComputed,
+        numTries,
+      );
+
+      expect(
+        countAlreadySubscribedExperimentVariant1Subscribers,
+        numTries,
+      );
+
+      /// User won't subscribe to another exclusive experiment
+      expect(
+        countExclusiveExperimentComputed,
+        0,
+      );
+
+      /// User will subscribe to concluded experiments
+      expect(
+        countConcludedExperimentComputed,
+        numTries,
+      );
+
+      /// User may subscribe to the inclusive experiment
+      expect(
+        countInclusiveExperimentComputed,
+        closeTo(expectedSubscribersCount, error),
+      );
+
+      final sigmaActualSubscribers =
+          sqrt(pow(countInclusiveVariant1Subscribers, 2) / 12);
+      final variantError =
+          1 - (sigmaActualSubscribers / expectedSubscribersCount);
+
+      expect(
+        countInclusiveVariant1Subscribers / countInclusiveVariant2Subscribers,
+        closeTo(
+          inclusiveExperiment.variants.first.ratio /
+              inclusiveExperiment.variants.last.ratio,
+          variantError,
+        ),
+      );
+    });
+
+    test(
+        'When passing previous subscribedVariantIds that do not exist in new remote config, user will unsubscribe from it',
+        () async {
+      const size = 0.3;
+      const expectedSubscribersCount = numTries * size;
+
+      Variant _getVariant(int index) => Variant(
+            id: 'variant_$index',
+            ratio: index + 2,
+            featureIds: ['feature_$index'],
+          );
+
+      /// Already subscribed
+      final alreadySubscribedExperiment = Experiment(
+        id: 'alreadySubscribedExperiment',
+        size: size,
+        variants: [
+          _getVariant(1),
+          _getVariant(2),
+        ],
+      );
+
+      /// Won't subscribe since it's exclusive
+      final newExperiment = Experiment(
+        id: 'newExperiment',
+        size: size,
+        variants: [
+          _getVariant(3),
+          _getVariant(4),
+        ],
+      );
+
+      final RemoteConfig fakeConfig = RemoteConfig(
+        appVersion: VersionConstraint.any,
+        experiments: [
+          newExperiment,
+        ],
+      );
+
+      final subscribedVariantId = alreadySubscribedExperiment.variants.first.id;
+      final subscribedVariantIds = <ExperimentIdAndVariantId>{
+        ExperimentIdAndVariantId(
+          alreadySubscribedExperiment.id,
+          subscribedVariantId,
+        ),
+      };
+
+      expect(alreadySubscribedExperiment.type, ExperimentType.aBExperiment);
+      expect(newExperiment.type, ExperimentType.aBExperiment);
+
+      var countAlreadySubscribedExperimentComputed = 0;
+      var countInclusiveExperimentComputed = 0;
+
+      for (int i = 0; i < numTries; i++) {
+        final result = ExperimentationEngineImpl().computeResult(
+          fakeConfig,
+          subscribedVariantIds,
+        );
+
+        final experiments = result.computedExperiments
+            .whereType<ExperimentResultSubscribed>()
+            .map((it) => it.experiment);
+
+        if (experiments.contains(alreadySubscribedExperiment)) {
+          countAlreadySubscribedExperimentComputed++;
+        }
+
+        if (experiments.contains(newExperiment)) {
+          countInclusiveExperimentComputed++;
+        }
+      }
+
+      /// User unsubscribed to their variant when experiment not found
+      expect(
+        countAlreadySubscribedExperimentComputed,
+        0,
+      );
+
+      /// User may subscribe to the inclusive experiment
+      expect(
+        countInclusiveExperimentComputed,
+        closeTo(expectedSubscribersCount, error),
       );
     });
   });
