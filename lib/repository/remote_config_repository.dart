@@ -20,7 +20,10 @@ class RemoteConfigRepositoryImpl extends RemoteConfigRepository {
   ) async {
     if (subscribedVariantIds.isEmpty) return;
     final box = await _getBox();
-    await box.putAt(0, subscribedVariantIds.map((it) => it.toList()));
+    await box.put(
+      _kExperimentationResultKey,
+      subscribedVariantIds.map((it) => it.toList()),
+    );
   }
 
   @override
