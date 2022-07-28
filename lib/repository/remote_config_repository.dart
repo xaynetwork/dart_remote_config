@@ -15,7 +15,7 @@ abstract class RemoteConfigRepository {
 
   Future<void> saveRemoteConfig(RemoteConfig remoteConfig);
 
-  Future<RemoteConfig> readRemoteConfig();
+  Future<RemoteConfig?> readRemoteConfig();
 }
 
 class RemoteConfigRepositoryImpl extends RemoteConfigRepository {
@@ -34,6 +34,7 @@ class RemoteConfigRepositoryImpl extends RemoteConfigRepository {
   @override
   Future<Set<KnownVariantId>> readSubscribedVariantIds() async {
     final box = await _getBox();
+    if (!box.containsKey(_kExperimentationResultKey)) return <KnownVariantId>{};
     final idSet = await box.get(_kExperimentationResultKey)
         as Iterable<Map<String, dynamic>>;
     return idSet.map((it) => KnownVariantId.fromJson(it)).toSet();
@@ -46,8 +47,9 @@ class RemoteConfigRepositoryImpl extends RemoteConfigRepository {
   }
 
   @override
-  Future<RemoteConfig> readRemoteConfig() async {
+  Future<RemoteConfig?> readRemoteConfig() async {
     final box = await _getBox();
+    if (!box.containsKey(_kRemoteConfigKey)) return null;
     final remoteConfigJson =
         await box.get(_kRemoteConfigKey) as Map<String, dynamic>;
     return RemoteConfig.fromJson(remoteConfigJson);
