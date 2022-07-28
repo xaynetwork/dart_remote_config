@@ -1,5 +1,5 @@
 import 'package:dart_remote_config/model/exceptions/remote_config_parser_exception.dart';
-import 'package:dart_remote_config/model/experimentation_engine_result.dart';
+import 'package:dart_remote_config/model/known_experiment_variant.dart';
 import 'package:dart_remote_config/model/variant.dart';
 import 'package:equatable/equatable.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -80,6 +80,6 @@ class Experiment extends Equatable {
 }
 
 extension ExperimentExtension on Experiment {
-  Set<ExperimentIdAndVariantId> get getVariantIds =>
-      variants.map((it) => ExperimentIdAndVariantId(id, it.id)).toSet();
+  Set<KnownVariantId> get getVariantIds =>
+      variants.map((it) => KnownVariantId(id, it.id)).toSet();
 }
