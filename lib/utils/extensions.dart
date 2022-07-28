@@ -1,5 +1,6 @@
 import 'package:dart_remote_config/model/experimentation_engine_result.dart';
 import 'package:dart_remote_config/model/feature.dart';
+import 'package:dart_remote_config/model/known_experiment_variant.dart';
 import 'package:dart_remote_config/model/variant.dart';
 
 extension CollectionExtension<T> on Iterable<T> {
@@ -41,7 +42,7 @@ extension ExperimentationEngineResultSuccessExtension
       )
       .toSet();
 
-  Set<ExperimentIdAndVariantId> get subscribedVariantIds =>
+  Set<KnownVariantId> get subscribedVariantIds =>
       activeExperiments.map((it) => it.selectedVariantId).toSet();
 }
 
@@ -54,8 +55,8 @@ extension ExperimentResultExtension on ExperimentResult {
             : subscribed.initialSelectedVariant,
       );
 
-  ExperimentIdAndVariantId get selectedVariantId => ExperimentIdAndVariantId(
+  KnownVariantId get selectedVariantId => KnownVariantId(
         experiment.id,
-        selectedVariant?.id ?? '',
+        selectedVariant?.id,
       );
 }

@@ -2,13 +2,10 @@ import 'package:dart_remote_config/model/experiment.dart';
 import 'package:dart_remote_config/model/feature.dart';
 import 'package:dart_remote_config/model/variant.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:tuple/tuple.dart';
 
 part 'experimentation_engine_result.freezed.dart';
 
 part 'experimentation_engine_result.g.dart';
-
-typedef ExperimentIdAndVariantId = Tuple2<String, String>;
 
 @freezed
 class ExperimentResult with _$ExperimentResult {

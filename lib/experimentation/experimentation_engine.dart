@@ -1,5 +1,6 @@
 import 'package:dart_remote_config/model/experiment.dart';
 import 'package:dart_remote_config/model/experimentation_engine_result.dart';
+import 'package:dart_remote_config/model/known_experiment_variant.dart';
 import 'package:dart_remote_config/model/remote_config.dart';
 import 'package:dart_remote_config/model/variant.dart';
 import 'package:dart_remote_config/utils/extensions.dart';
@@ -8,7 +9,7 @@ import 'package:dart_remote_config/utils/random_choice.dart';
 abstract class ExperimentationEngine {
   ExperimentationEngineResult computeResult(
     RemoteConfig config, [
-    Set<ExperimentIdAndVariantId>? subscribedVariantIds,
+    Set<KnownVariantId> knownVariantIds,
   ]);
 }
 
@@ -16,7 +17,7 @@ class ExperimentationEngineImpl implements ExperimentationEngine {
   @override
   ExperimentationEngineResult computeResult(
     RemoteConfig config, [
-    Set<ExperimentIdAndVariantId>? subscribedVariantIds,
+    Set<KnownVariantId> subscribedVariantIds = const {},
   ]) {
     final experiments = config.experiments.where((it) => it.enabled).toSet();
 
@@ -55,18 +56,16 @@ class ExperimentationEngineImpl implements ExperimentationEngine {
 
   Set<ExperimentResult> _getPreviousResults(
     Set<Experiment> experiments,
-    Set<ExperimentIdAndVariantId>? subscribedVariantIds,
+    Set<KnownVariantId> subscribedVariantIds,
   ) {
-    bool experimentIsComputed(Experiment experiment) =>
-        subscribedVariantIds?.map((it) => it.item1).contains(experiment.id) ??
-        false;
+    bool experimentIsComputed(Experiment experiment) => subscribedVariantIds
+        .map((it) => it.experimentId)
+        .contains(experiment.id);
 
-    bool variantIsSubscribed(Variant variant) =>
-        subscribedVariantIds
-            ?.map((variantId) => variantId.item2)
-            .where((it) => it.isNotEmpty)
-            .contains(variant.id) ??
-        false;
+    bool variantIsSubscribed(Variant variant) => subscribedVariantIds
+        .where((it) => it.isSubscribed)
+        .map((variantId) => variantId.variantId)
+        .contains(variant.id);
 
     ExperimentResult experimentToResult(Experiment experiment) {
       final selectedVariant = experiment.variants.firstWhereOrNull(

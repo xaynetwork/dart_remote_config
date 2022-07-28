@@ -4,6 +4,7 @@ import 'package:dart_remote_config/experimentation/experimentation_engine.dart';
 import 'package:dart_remote_config/model/experiment.dart';
 import 'package:dart_remote_config/model/experimentation_engine_result.dart';
 import 'package:dart_remote_config/model/feature_value.dart';
+import 'package:dart_remote_config/model/known_experiment_variant.dart';
 import 'package:dart_remote_config/model/remote_config.dart';
 import 'package:dart_remote_config/model/remote_config_response.dart';
 import 'package:dart_remote_config/model/variant.dart';
@@ -556,8 +557,8 @@ void main() {
       );
 
       final subscribedVariantId = alreadySubscribedExperiment.variants.first.id;
-      final subscribedVariantIds = <ExperimentIdAndVariantId>{
-        ExperimentIdAndVariantId(
+      final subscribedVariantIds = <KnownVariantId>{
+        KnownVariantId(
           alreadySubscribedExperiment.id,
           subscribedVariantId,
         ),
@@ -704,8 +705,8 @@ void main() {
       );
 
       final subscribedVariantId = alreadySubscribedExperiment.variants.first.id;
-      final subscribedVariantIds = <ExperimentIdAndVariantId>{
-        ExperimentIdAndVariantId(
+      final subscribedVariantIds = <KnownVariantId>{
+        KnownVariantId(
           alreadySubscribedExperiment.id,
           subscribedVariantId,
         ),
