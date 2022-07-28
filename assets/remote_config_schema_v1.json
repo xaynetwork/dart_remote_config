@@ -79,7 +79,7 @@
       "properties": {
         "id": {
           "type": "string",
-          "minLength": 3
+          "minLength": 1
         },
         "value": {
           "$ref": "#/definitions/featureValue"
@@ -90,7 +90,7 @@
       "type": "object",
       "required": [
         "id",
-        "features"
+        "featureIds"
       ],
       "properties": {
         "id": {
@@ -102,7 +102,7 @@
           "minimum": 1,
           "default": 1
         },
-        "features": {
+        "featureIds": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/feature"

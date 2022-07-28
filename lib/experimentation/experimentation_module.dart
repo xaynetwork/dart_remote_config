@@ -8,10 +8,9 @@ import 'package:dart_remote_config/utils/extensions.dart';
 abstract class ExperimentationModule {
   Future<ExperimentationEngineResult> compute(RemoteConfig config);
 
-  Future<ExperimentationEngineResult> fetchThenCompute({
-    required S3Factory s3Factory,
-    required RConfigFileNameBuilder nameBuilder,
-    required String bucketName,
+  /// TODO: refactor to a remote config manager
+  Future<ExperimentationEngineResult?> fetchThenCompute({
+    required S3RemoteConfigFetcher fetcher,
     required String versionString,
   });
 }
@@ -29,19 +28,11 @@ class ExperimentsFetcherImpl implements ExperimentationModule {
   }
 
   @override
-  Future<ExperimentationEngineResult> fetchThenCompute({
-    required S3Factory s3Factory,
-    required RConfigFileNameBuilder nameBuilder,
-    required String bucketName,
+  Future<ExperimentationEngineResult?> fetchThenCompute({
+    required S3RemoteConfigFetcher fetcher,
     required String versionString,
   }) async {
-    final _fetcher = S3RemoteConfigFetcher(
-      s3Factory: s3Factory,
-      nameBuilder: nameBuilder,
-      bucketName: bucketName,
-    );
-
-    final response = await _fetcher.fetch();
+    final response = await fetcher.fetch();
 
     final config = response.whenOrNull(
       success: (success) => success.findConfig(versionString),
@@ -53,6 +44,6 @@ class ExperimentsFetcherImpl implements ExperimentationModule {
     }
 
     final previousRemoteConfig = await _repository.readRemoteConfig();
-    return compute(previousRemoteConfig);
+    return previousRemoteConfig == null ? null : compute(previousRemoteConfig);
   }
 }
