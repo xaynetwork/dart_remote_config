@@ -35,3 +35,10 @@ jobs:
       - name: Run Tests
         run: |
           dart test
+      - name: Install ajv validator
+        run: |
+          npm install -g ajv-cli
+      - name: Run checks
+        run: |
+          find test -name valid_rconfig.yaml -print0 | xargs -n 1 -0 ajv -s assets/remote_config_schema_v1.json -d
+
