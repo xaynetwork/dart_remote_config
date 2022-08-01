@@ -105,7 +105,7 @@
         "featureIds": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/feature"
+            "type": "string"
           },
           "minItems": 1,
           "uniqueItems": true
