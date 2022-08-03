@@ -30,6 +30,20 @@ class FileRemoteConfigFetcher extends RemoteConfigFetcher
   }
 }
 
+class StringRemoteConfigFetcher
+    with RemoteConfigFetcherBase
+    implements RemoteConfigFetcher {
+  final RemoteConfigParser parser = const RemoteConfigParser();
+  final String input;
+
+  StringRemoteConfigFetcher(this.input);
+
+  @override
+  Future<RemoteConfigResponse> fetch() async {
+    return fromYamlStringContent(input, parser);
+  }
+}
+
 typedef S3Factory = S3 Function();
 typedef RConfigFileNameBuilder = String Function();
 
