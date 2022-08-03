@@ -1,13 +1,13 @@
 import 'package:dart_remote_config/experimentation/experimentation_engine.dart';
 import 'package:dart_remote_config/experimentation/experimentation_module.dart';
+import 'package:dart_remote_config/fetcher/remote_config_fetcher.dart';
 import 'package:dart_remote_config/model/dart_remote_config_state.dart';
-import 'package:dart_remote_config/remote_config_fetcher.dart';
 import 'package:dart_remote_config/repository/remote_config_repository.dart';
 
+export 'fetcher/remote_config_fetcher.dart';
 export 'model/promo_code.dart';
 export 'model/remote_config.dart';
 export 'model/remote_config_response.dart';
-export 'remote_config_fetcher.dart';
 export 'utils/extensions.dart';
 
 typedef VersionProvider = String Function();

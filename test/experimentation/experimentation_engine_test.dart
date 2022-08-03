@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:dart_remote_config/experimentation/experimentation_engine.dart';
+import 'package:dart_remote_config/fetcher/remote_config_fetcher.dart';
 import 'package:dart_remote_config/model/experiment.dart';
 import 'package:dart_remote_config/model/experimentation_engine_result.dart';
 import 'package:dart_remote_config/model/feature_value.dart';
@@ -8,7 +9,6 @@ import 'package:dart_remote_config/model/known_experiment_variant.dart';
 import 'package:dart_remote_config/model/remote_config.dart';
 import 'package:dart_remote_config/model/remote_config_response.dart';
 import 'package:dart_remote_config/model/variant.dart';
-import 'package:dart_remote_config/remote_config_fetcher.dart';
 import 'package:dart_remote_config/utils/extensions.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:test/test.dart';
