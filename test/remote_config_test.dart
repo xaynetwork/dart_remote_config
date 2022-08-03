@@ -1,9 +1,7 @@
-import 'dart:convert';
-
+import 'package:dart_remote_config/fetcher/remote_config_fetcher.dart';
 import 'package:dart_remote_config/model/promo_code.dart';
 import 'package:dart_remote_config/model/remote_config.dart';
 import 'package:dart_remote_config/model/remote_config_response.dart';
-import 'package:dart_remote_config/remote_config_fetcher.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -47,7 +45,6 @@ void main() {
         as RemoteConfigResponseSuccess;
 
     final config = res.remoteConfigs.findConfig('3.34.0')!;
-    print(json.encode(config.toJson()));
     expect(config.findValidPromoCode("TEST2"), null);
   });
 
