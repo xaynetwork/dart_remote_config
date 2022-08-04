@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:aws_s3_api/s3-2006-03-01.dart';
+import 'package:dart_remote_config/fetcher/cache_strategy.dart';
 import 'package:dart_remote_config/fetcher/remote_config_fetcher.dart';
 import 'package:dart_remote_config/model/remote_config_response.dart';
 import 'package:shared_aws_api/shared.dart';
@@ -70,17 +71,4 @@ class S3RemoteConfigFetcher extends RemoteConfigFetcher
 
     return utf8.decode(Uint8List.fromList(listBucketsOutput.body ?? []));
   }
-}
-
-class NoCachingStrategy extends CacheStrategy {
-  const NoCachingStrategy();
-
-  @override
-  Future<String> fetch(Future<String> Function() request) => request();
-}
-
-abstract class CacheStrategy {
-  const CacheStrategy();
-
-  Future<String> fetch(Future<String> Function() request);
 }
