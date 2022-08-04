@@ -1,7 +1,10 @@
+import 'package:dart_remote_config/fetcher/cache_strategy.dart';
 import 'package:dart_remote_config/fetcher/remote_config_fetcher.dart';
+import 'package:dart_remote_config/model/known_experiment_variant.dart';
 import 'package:dart_remote_config/model/promo_code.dart';
 import 'package:dart_remote_config/model/remote_config.dart';
 import 'package:dart_remote_config/model/remote_config_response.dart';
+import 'package:dart_remote_config/repository/remote_config_repository.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -89,4 +92,87 @@ void main() {
       'FormatException: Could not parse version "bla". Unknown text at "bla".',
     );
   });
+
+  test('Cache Strategy should return first the default file', () async {
+    const fallbackFile = """
+- appVersion: ">3.33.0 <4.0.0"
+  features:
+    - feature:
+      id: fallback
+    """;
+
+    const serverFile = """
+- appVersion: ">3.33.0 <4.0.0"
+  features:
+    - feature:
+      id: server
+    """;
+    final repository = InMemoryRepository();
+    final cache = CacheOnlyUpdateUnawaited(
+      repository,
+      () async => fallbackFile,
+    );
+
+    final returnedFile = await cache.fetch(() async => serverFile);
+
+    expect(returnedFile, fallbackFile);
+    await cache.fetchFuture;
+    expect(await repository.readRemoteConfig(), serverFile);
+  });
+
+  test('Cache should return the repository content on the second try',
+      () async {
+    const fallbackFile = """
+- appVersion: ">3.33.0 <4.0.0"
+  features:
+    - feature:
+      id: fallback
+    """;
+
+    const serverFile = """
+- appVersion: ">3.33.0 <4.0.0"
+  features:
+    - feature:
+      id: server
+    """;
+
+    const repositoryFile = """
+- appVersion: ">3.33.0 <4.0.0"
+  features:
+    - feature:
+      id: repository
+    """;
+    final repo = InMemoryRepository();
+    await repo.saveRemoteConfig(repositoryFile);
+    final cache = CacheOnlyUpdateUnawaited(
+      repo,
+      () async => fallbackFile,
+    );
+
+    final returnedFile = await cache.fetch(() async => serverFile);
+
+    expect(returnedFile, repositoryFile);
+  });
+}
+
+class InMemoryRepository extends RemoteConfigRepository {
+  String? _rconfig;
+  Set<KnownVariantId> _variants = {};
+
+  @override
+  Future<String?> readRemoteConfig() async => _rconfig;
+
+  @override
+  Future<Set<KnownVariantId>> readSubscribedVariantIds() async => _variants;
+
+  @override
+  Future<void> saveRemoteConfig(String remoteConfig) async {
+    _rconfig = remoteConfig;
+  }
+
+  @override
+  Future<void> saveSubscribedVariantsIds(
+      Set<KnownVariantId> subscribedVariantIds) async {
+    _variants = subscribedVariantIds;
+  }
 }
