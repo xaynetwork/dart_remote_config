@@ -33,6 +33,35 @@ void main() {
       final result = ExperimentationEngineImpl().computeResult(config);
       expect(result.computedExperiments.length, greaterThan(0));
     });
+
+    test('Parsing the config and running a successful experiment', () async {
+      const configString = """
+  - appVersion: ">3.46.0 <4.0.0"
+    features:
+      - feature:
+        id: feature
+    experiments:
+      - experiment:
+        id: experiment
+        size: 0.4
+        variants:
+         - id: a
+           featureIds:
+             - feature
+  """;
+
+      final parsedConfig =
+          await StringRemoteConfigFetcher(configString).fetch();
+
+      expect(parsedConfig, isA<RemoteConfigResponseSuccess>());
+
+      final config = parsedConfig.mapOrNull(
+        success: (success) => success.remoteConfigs.configs.first,
+      );
+
+      final result = ExperimentationEngineImpl().computeResult(config!);
+      expect(result.computedExperiments.length, greaterThan(0));
+    });
   });
 
   group('concluded experiments with single variant and size = 1', () {
@@ -561,6 +590,7 @@ void main() {
         KnownVariantId(
           alreadySubscribedExperiment.id,
           subscribedVariantId,
+          alreadySubscribedExperiment.size,
         ),
       };
 
@@ -709,6 +739,7 @@ void main() {
         KnownVariantId(
           alreadySubscribedExperiment.id,
           subscribedVariantId,
+          alreadySubscribedExperiment.size,
         ),
       };
 

@@ -59,6 +59,7 @@ class ExperimentationEngineImpl implements ExperimentationEngine {
     Set<KnownVariantId> subscribedVariantIds,
   ) {
     bool experimentIsComputed(Experiment experiment) => subscribedVariantIds
+        .where((it) => it.isSubscribed || it.size == experiment.size)
         .map((it) => it.experimentId)
         .contains(experiment.id);
 

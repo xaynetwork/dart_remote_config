@@ -81,5 +81,5 @@ class Experiment extends Equatable {
 
 extension ExperimentExtension on Experiment {
   Set<KnownVariantId> get getVariantIds =>
-      variants.map((it) => KnownVariantId(id, it.id)).toSet();
+      variants.map((it) => KnownVariantId(id, it.id, size)).toSet();
 }
