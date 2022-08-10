@@ -58,5 +58,6 @@ extension ExperimentResultExtension on ExperimentResult {
   KnownVariantId get selectedVariantId => KnownVariantId(
         experiment.id,
         selectedVariant?.id,
+        experiment.size,
       );
 }
