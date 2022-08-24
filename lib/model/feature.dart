@@ -1,5 +1,6 @@
 import 'package:dart_remote_config/model/exceptions/remote_config_parser_exception.dart';
 import 'package:dart_remote_config/model/feature_value.dart';
+import 'package:equatable/equatable.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:yaml/yaml.dart';
@@ -18,7 +19,7 @@ dynamic _valueFromJson(FeatureValue? value) => value?.mapOrNull(
     );
 
 @JsonSerializable()
-class Feature {
+class Feature extends Equatable {
   final String id;
 
   @JsonKey(
@@ -33,7 +34,7 @@ class Feature {
         boolean: (_) => true,
       );
 
-  Feature({
+  const Feature({
     required this.id,
     FeatureValue? value,
   }) : value = value ?? const FeatureValue.nothing();
@@ -50,4 +51,7 @@ class Feature {
   }
 
   Map<String, dynamic> toJson() => _$FeatureToJson(this);
+
+  @override
+  List<Object?> get props => [id, value];
 }

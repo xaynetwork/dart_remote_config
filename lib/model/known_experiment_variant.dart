@@ -16,4 +16,7 @@ class KnownVariantId {
       _$KnownVariantIdFromJson(json as Map<String, dynamic>);
 
   Map<String, dynamic> toJson() => _$KnownVariantIdToJson(this);
+
+  @override
+  String toString() => '$experimentId.$variantId:$size';
 }

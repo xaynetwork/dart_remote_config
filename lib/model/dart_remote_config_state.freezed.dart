@@ -49,20 +49,20 @@ mixin _$DartRemoteConfigState {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(_Success value) success,
-    required TResult Function(_Failure value) failed,
+    required TResult Function(DartRemoteConfigStateSuccess value) success,
+    required TResult Function(DartRemoteConfigStateFailure value) failed,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(_Success value)? success,
-    TResult Function(_Failure value)? failed,
+    TResult Function(DartRemoteConfigStateSuccess value)? success,
+    TResult Function(DartRemoteConfigStateFailure value)? failed,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(_Success value)? success,
-    TResult Function(_Failure value)? failed,
+    TResult Function(DartRemoteConfigStateSuccess value)? success,
+    TResult Function(DartRemoteConfigStateFailure value)? failed,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -86,31 +86,35 @@ class _$DartRemoteConfigStateCopyWithImpl<$Res>
 }
 
 /// @nodoc
-abstract class _$$_SuccessCopyWith<$Res> {
-  factory _$$_SuccessCopyWith(
-          _$_Success value, $Res Function(_$_Success) then) =
-      __$$_SuccessCopyWithImpl<$Res>;
+abstract class _$$DartRemoteConfigStateSuccessCopyWith<$Res> {
+  factory _$$DartRemoteConfigStateSuccessCopyWith(
+          _$DartRemoteConfigStateSuccess value,
+          $Res Function(_$DartRemoteConfigStateSuccess) then) =
+      __$$DartRemoteConfigStateSuccessCopyWithImpl<$Res>;
   $Res call({RemoteConfig config, ExperimentationEngineResult experiments});
 
   $ExperimentationEngineResultCopyWith<$Res> get experiments;
 }
 
 /// @nodoc
-class __$$_SuccessCopyWithImpl<$Res>
+class __$$DartRemoteConfigStateSuccessCopyWithImpl<$Res>
     extends _$DartRemoteConfigStateCopyWithImpl<$Res>
-    implements _$$_SuccessCopyWith<$Res> {
-  __$$_SuccessCopyWithImpl(_$_Success _value, $Res Function(_$_Success) _then)
-      : super(_value, (v) => _then(v as _$_Success));
+    implements _$$DartRemoteConfigStateSuccessCopyWith<$Res> {
+  __$$DartRemoteConfigStateSuccessCopyWithImpl(
+      _$DartRemoteConfigStateSuccess _value,
+      $Res Function(_$DartRemoteConfigStateSuccess) _then)
+      : super(_value, (v) => _then(v as _$DartRemoteConfigStateSuccess));
 
   @override
-  _$_Success get _value => super._value as _$_Success;
+  _$DartRemoteConfigStateSuccess get _value =>
+      super._value as _$DartRemoteConfigStateSuccess;
 
   @override
   $Res call({
     Object? config = freezed,
     Object? experiments = freezed,
   }) {
-    return _then(_$_Success(
+    return _then(_$DartRemoteConfigStateSuccess(
       config: config == freezed
           ? _value.config
           : config // ignore: cast_nullable_to_non_nullable
@@ -133,8 +137,9 @@ class __$$_SuccessCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Success implements _Success {
-  const _$_Success({required this.config, required this.experiments});
+class _$DartRemoteConfigStateSuccess implements DartRemoteConfigStateSuccess {
+  const _$DartRemoteConfigStateSuccess(
+      {required this.config, required this.experiments});
 
   @override
   final RemoteConfig config;
@@ -150,7 +155,7 @@ class _$_Success implements _Success {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Success &&
+            other is _$DartRemoteConfigStateSuccess &&
             const DeepCollectionEquality().equals(other.config, config) &&
             const DeepCollectionEquality()
                 .equals(other.experiments, experiments));
@@ -164,8 +169,9 @@ class _$_Success implements _Success {
 
   @JsonKey(ignore: true)
   @override
-  _$$_SuccessCopyWith<_$_Success> get copyWith =>
-      __$$_SuccessCopyWithImpl<_$_Success>(this, _$identity);
+  _$$DartRemoteConfigStateSuccessCopyWith<_$DartRemoteConfigStateSuccess>
+      get copyWith => __$$DartRemoteConfigStateSuccessCopyWithImpl<
+          _$DartRemoteConfigStateSuccess>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -213,8 +219,8 @@ class _$_Success implements _Success {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(_Success value) success,
-    required TResult Function(_Failure value) failed,
+    required TResult Function(DartRemoteConfigStateSuccess value) success,
+    required TResult Function(DartRemoteConfigStateFailure value) failed,
   }) {
     return success(this);
   }
@@ -222,8 +228,8 @@ class _$_Success implements _Success {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(_Success value)? success,
-    TResult Function(_Failure value)? failed,
+    TResult Function(DartRemoteConfigStateSuccess value)? success,
+    TResult Function(DartRemoteConfigStateFailure value)? failed,
   }) {
     return success?.call(this);
   }
@@ -231,8 +237,8 @@ class _$_Success implements _Success {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(_Success value)? success,
-    TResult Function(_Failure value)? failed,
+    TResult Function(DartRemoteConfigStateSuccess value)? success,
+    TResult Function(DartRemoteConfigStateFailure value)? failed,
     required TResult orElse(),
   }) {
     if (success != null) {
@@ -242,45 +248,50 @@ class _$_Success implements _Success {
   }
 }
 
-abstract class _Success implements DartRemoteConfigState {
-  const factory _Success(
-      {required final RemoteConfig config,
-      required final ExperimentationEngineResult experiments}) = _$_Success;
+abstract class DartRemoteConfigStateSuccess implements DartRemoteConfigState {
+  const factory DartRemoteConfigStateSuccess(
+          {required final RemoteConfig config,
+          required final ExperimentationEngineResult experiments}) =
+      _$DartRemoteConfigStateSuccess;
 
   RemoteConfig get config => throw _privateConstructorUsedError;
   ExperimentationEngineResult get experiments =>
       throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  _$$_SuccessCopyWith<_$_Success> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$DartRemoteConfigStateSuccessCopyWith<_$DartRemoteConfigStateSuccess>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$_FailureCopyWith<$Res> {
-  factory _$$_FailureCopyWith(
-          _$_Failure value, $Res Function(_$_Failure) then) =
-      __$$_FailureCopyWithImpl<$Res>;
+abstract class _$$DartRemoteConfigStateFailureCopyWith<$Res> {
+  factory _$$DartRemoteConfigStateFailureCopyWith(
+          _$DartRemoteConfigStateFailure value,
+          $Res Function(_$DartRemoteConfigStateFailure) then) =
+      __$$DartRemoteConfigStateFailureCopyWithImpl<$Res>;
   $Res call(
       {DartRemoteConfigStatus status,
       RemoteConfigResponseFailure? fetcherError});
 }
 
 /// @nodoc
-class __$$_FailureCopyWithImpl<$Res>
+class __$$DartRemoteConfigStateFailureCopyWithImpl<$Res>
     extends _$DartRemoteConfigStateCopyWithImpl<$Res>
-    implements _$$_FailureCopyWith<$Res> {
-  __$$_FailureCopyWithImpl(_$_Failure _value, $Res Function(_$_Failure) _then)
-      : super(_value, (v) => _then(v as _$_Failure));
+    implements _$$DartRemoteConfigStateFailureCopyWith<$Res> {
+  __$$DartRemoteConfigStateFailureCopyWithImpl(
+      _$DartRemoteConfigStateFailure _value,
+      $Res Function(_$DartRemoteConfigStateFailure) _then)
+      : super(_value, (v) => _then(v as _$DartRemoteConfigStateFailure));
 
   @override
-  _$_Failure get _value => super._value as _$_Failure;
+  _$DartRemoteConfigStateFailure get _value =>
+      super._value as _$DartRemoteConfigStateFailure;
 
   @override
   $Res call({
     Object? status = freezed,
     Object? fetcherError = freezed,
   }) {
-    return _then(_$_Failure(
+    return _then(_$DartRemoteConfigStateFailure(
       status: status == freezed
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
@@ -295,8 +306,9 @@ class __$$_FailureCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Failure implements _Failure {
-  const _$_Failure({required this.status, this.fetcherError});
+class _$DartRemoteConfigStateFailure implements DartRemoteConfigStateFailure {
+  const _$DartRemoteConfigStateFailure(
+      {required this.status, this.fetcherError});
 
   @override
   final DartRemoteConfigStatus status;
@@ -312,7 +324,7 @@ class _$_Failure implements _Failure {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Failure &&
+            other is _$DartRemoteConfigStateFailure &&
             const DeepCollectionEquality().equals(other.status, status) &&
             const DeepCollectionEquality()
                 .equals(other.fetcherError, fetcherError));
@@ -326,8 +338,9 @@ class _$_Failure implements _Failure {
 
   @JsonKey(ignore: true)
   @override
-  _$$_FailureCopyWith<_$_Failure> get copyWith =>
-      __$$_FailureCopyWithImpl<_$_Failure>(this, _$identity);
+  _$$DartRemoteConfigStateFailureCopyWith<_$DartRemoteConfigStateFailure>
+      get copyWith => __$$DartRemoteConfigStateFailureCopyWithImpl<
+          _$DartRemoteConfigStateFailure>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -375,8 +388,8 @@ class _$_Failure implements _Failure {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(_Success value) success,
-    required TResult Function(_Failure value) failed,
+    required TResult Function(DartRemoteConfigStateSuccess value) success,
+    required TResult Function(DartRemoteConfigStateFailure value) failed,
   }) {
     return failed(this);
   }
@@ -384,8 +397,8 @@ class _$_Failure implements _Failure {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(_Success value)? success,
-    TResult Function(_Failure value)? failed,
+    TResult Function(DartRemoteConfigStateSuccess value)? success,
+    TResult Function(DartRemoteConfigStateFailure value)? failed,
   }) {
     return failed?.call(this);
   }
@@ -393,8 +406,8 @@ class _$_Failure implements _Failure {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(_Success value)? success,
-    TResult Function(_Failure value)? failed,
+    TResult Function(DartRemoteConfigStateSuccess value)? success,
+    TResult Function(DartRemoteConfigStateFailure value)? failed,
     required TResult orElse(),
   }) {
     if (failed != null) {
@@ -404,15 +417,16 @@ class _$_Failure implements _Failure {
   }
 }
 
-abstract class _Failure implements DartRemoteConfigState {
-  const factory _Failure(
-      {required final DartRemoteConfigStatus status,
-      final RemoteConfigResponseFailure? fetcherError}) = _$_Failure;
+abstract class DartRemoteConfigStateFailure implements DartRemoteConfigState {
+  const factory DartRemoteConfigStateFailure(
+          {required final DartRemoteConfigStatus status,
+          final RemoteConfigResponseFailure? fetcherError}) =
+      _$DartRemoteConfigStateFailure;
 
   DartRemoteConfigStatus get status => throw _privateConstructorUsedError;
   RemoteConfigResponseFailure? get fetcherError =>
       throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  _$$_FailureCopyWith<_$_Failure> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$DartRemoteConfigStateFailureCopyWith<_$DartRemoteConfigStateFailure>
+      get copyWith => throw _privateConstructorUsedError;
 }
