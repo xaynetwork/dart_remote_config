@@ -1,9 +1,13 @@
 import 'dart:math';
 
+import 'package:dart_remote_config/dart_remote_config.dart';
 import 'package:dart_remote_config/experimentation/experimentation_engine.dart';
+import 'package:dart_remote_config/experimentation/experimentation_module.dart';
 import 'package:dart_remote_config/fetcher/remote_config_fetcher.dart';
+import 'package:dart_remote_config/model/dart_remote_config_state.dart';
 import 'package:dart_remote_config/model/experiment.dart';
 import 'package:dart_remote_config/model/experimentation_engine_result.dart';
+import 'package:dart_remote_config/model/feature.dart';
 import 'package:dart_remote_config/model/feature_value.dart';
 import 'package:dart_remote_config/model/known_experiment_variant.dart';
 import 'package:dart_remote_config/model/remote_config.dart';
@@ -12,6 +16,8 @@ import 'package:dart_remote_config/model/variant.dart';
 import 'package:dart_remote_config/utils/extensions.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:test/test.dart';
+
+import '../remote_config_test.dart';
 
 void main() {
   const numTries = 1000;
@@ -61,6 +67,262 @@ void main() {
 
       final result = ExperimentationEngineImpl().computeResult(config!);
       expect(result.computedExperiments.length, greaterThan(0));
+    });
+
+    test('Stay subscribed when the size does not change in a new fetch.',
+        () async {
+      final repository = InMemoryRepository();
+      await repository.saveSubscribedVariantsIds(
+        {const KnownVariantId('experiment', 'a', 0.4)},
+      );
+      final state = await DartRemoteConfig(
+        fetcher: StringRemoteConfigFetcher(
+          """
+  - appVersion: ">3.46.0 <4.0.0"
+    features:
+      - feature:
+        id: feature
+    experiments:
+      - experiment:
+        id: experiment
+        size: 0.4
+        variants:
+         - id: a
+           featureIds:
+             - feature
+  """,
+        ),
+        versionProvider: () => '3.50.0',
+        experimentationModuleFactory: () {
+          return ExperimentationModule(ExperimentationEngineImpl(), repository);
+        },
+      ).create();
+
+      expect(state, isA<DartRemoteConfigStateSuccess>());
+      expect(
+          (state as DartRemoteConfigStateSuccess).experiments.activeExperiments,
+          {
+            const ExperimentResult.subscribed(
+              experiment: Experiment(
+                id: 'experiment',
+                size: 0.4,
+              ),
+              initialSelectedVariant: Variant(id: 'a'),
+            )
+          });
+    });
+
+    test('Stay subscribed when the size increases in a new fetch.', () async {
+      final repository = InMemoryRepository();
+      await repository.saveSubscribedVariantsIds(
+        {const KnownVariantId('experiment', 'a', 0.4)},
+      );
+      final state = await DartRemoteConfig(
+        fetcher: StringRemoteConfigFetcher(
+          """
+  - appVersion: ">3.46.0 <4.0.0"
+    features:
+      - feature:
+        id: feature
+    experiments:
+      - experiment:
+        id: experiment
+        size: 0.5
+        variants:
+         - id: a
+           featureIds:
+             - feature
+  """,
+        ),
+        versionProvider: () => '3.50.0',
+        experimentationModuleFactory: () {
+          return ExperimentationModule(ExperimentationEngineImpl(), repository);
+        },
+      ).create();
+
+      expect(state, isA<DartRemoteConfigStateSuccess>());
+      expect(
+          (state as DartRemoteConfigStateSuccess).experiments.activeExperiments,
+          {
+            const ExperimentResult.subscribed(
+              experiment: Experiment(
+                id: 'experiment',
+                size: 0.5,
+              ),
+              initialSelectedVariant: Variant(id: 'a'),
+            )
+          });
+    });
+
+    test('Stay subscribed when the size decrease in a new fetch.', () async {
+      final repository = InMemoryRepository();
+      await repository.saveSubscribedVariantsIds(
+        {const KnownVariantId('experiment', 'a', 0.4)},
+      );
+      final state = await DartRemoteConfig(
+        fetcher: StringRemoteConfigFetcher(
+          """
+  - appVersion: ">3.46.0 <4.0.0"
+    features:
+      - feature:
+        id: feature
+    experiments:
+      - experiment:
+        id: experiment
+        size: 0.3
+        variants:
+         - id: a
+           featureIds:
+             - feature
+  """,
+        ),
+        versionProvider: () => '3.50.0',
+        experimentationModuleFactory: () {
+          return ExperimentationModule(ExperimentationEngineImpl(), repository);
+        },
+      ).create();
+
+      expect(state, isA<DartRemoteConfigStateSuccess>());
+      expect(
+          (state as DartRemoteConfigStateSuccess).experiments.activeExperiments,
+          {
+            const ExperimentResult.subscribed(
+              experiment: Experiment(
+                id: 'experiment',
+                size: 0.3,
+              ),
+              initialSelectedVariant: Variant(id: 'a'),
+            )
+          });
+    });
+
+    test('Stay unsubscribed when you have seen the same rollout before.',
+        () async {
+      final repository = InMemoryRepository();
+      await repository.saveSubscribedVariantsIds(
+        {const KnownVariantId('experiment', null, 0.4)},
+      );
+      final state = await DartRemoteConfig(
+        fetcher: StringRemoteConfigFetcher(
+          """
+  - appVersion: ">3.46.0 <4.0.0"
+    features:
+      - feature:
+        id: feature
+    experiments:
+      - experiment:
+        id: experiment
+        size: 0.4
+        variants:
+         - id: a
+           featureIds:
+             - feature
+  """,
+        ),
+        versionProvider: () => '3.50.0',
+        experimentationModuleFactory: () {
+          return ExperimentationModule(ExperimentationEngineImpl(), repository);
+        },
+      ).create();
+
+      expect(state, isA<DartRemoteConfigStateSuccess>());
+      expect(
+        (state as DartRemoteConfigStateSuccess).experiments.activeExperiments,
+        {
+          const ExperimentResult.notSubscribed(
+            experiment: Experiment(id: 'experiment', size: 0.4),
+          )
+        },
+      );
+      expect(
+        state.experiments.enabledFeatures,
+        isEmpty,
+      );
+    });
+
+    test('Switch to be subscribed when the rollout almost reaches 100%.',
+        () async {
+      final repository = InMemoryRepository();
+      await repository.saveSubscribedVariantsIds(
+        {const KnownVariantId('experiment', null, 0.4)},
+      );
+      final state = await DartRemoteConfig(
+        fetcher: StringRemoteConfigFetcher(
+          """
+  - appVersion: ">3.46.0 <4.0.0"
+    features:
+      - feature:
+        id: feature
+    experiments:
+      - experiment:
+        id: experiment
+        size: 0.99999
+        variants:
+         - id: a
+           featureIds:
+             - feature
+  """,
+        ),
+        versionProvider: () => '3.50.0',
+        experimentationModuleFactory: () {
+          return ExperimentationModule(ExperimentationEngineImpl(), repository);
+        },
+      ).create();
+
+      expect(state, isA<DartRemoteConfigStateSuccess>());
+      expect(
+        (state as DartRemoteConfigStateSuccess).experiments.activeExperiments,
+        {
+          const ExperimentResult.subscribed(
+            experiment: Experiment(
+              id: 'experiment',
+              size: 0.4,
+            ),
+            initialSelectedVariant: Variant(id: 'a'),
+          )
+        },
+      );
+      expect(
+        state.experiments.enabledFeatures,
+        {const Feature(id: 'feature')},
+      );
+    });
+
+    test(
+        'Users that were not subscribed but saw the experiment before will subscribe when changing to 100% rollout',
+        () async {
+      final repository = InMemoryRepository();
+      await repository.saveSubscribedVariantsIds(
+        {const KnownVariantId('experiment', null, 0.4)},
+      );
+      final state = await DartRemoteConfig(
+        fetcher: StringRemoteConfigFetcher(
+          """
+  - appVersion: ">3.46.0 <4.0.0"
+    features:
+      - feature:
+        id: feature
+    experiments:
+      - experiment:
+        id: experiment
+        size: 1.0
+        variants:
+         - id: a
+           featureIds:
+             - feature
+  """,
+        ),
+        versionProvider: () => '3.50.0',
+        experimentationModuleFactory: () {
+          return ExperimentationModule(ExperimentationEngineImpl(), repository);
+        },
+      ).create();
+
+      expect(state, isA<DartRemoteConfigStateSuccess>());
+      expect(
+        (state as DartRemoteConfigStateSuccess).experiments.enabledFeatures,
+        {const Feature(id: 'feature')},
+      );
     });
   });
 

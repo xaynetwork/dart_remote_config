@@ -15,10 +15,10 @@ class DartRemoteConfigState with _$DartRemoteConfigState {
   const factory DartRemoteConfigState.success({
     required RemoteConfig config,
     required ExperimentationEngineResult experiments,
-  }) = _Success;
+  }) = DartRemoteConfigStateSuccess;
 
   const factory DartRemoteConfigState.failed({
     required DartRemoteConfigStatus status,
     RemoteConfigResponseFailure? fetcherError,
-  }) = _Failure;
+  }) = DartRemoteConfigStateFailure;
 }
