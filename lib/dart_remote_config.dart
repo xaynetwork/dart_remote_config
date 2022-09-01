@@ -5,6 +5,7 @@ import 'package:dart_remote_config/model/dart_remote_config_state.dart';
 import 'package:dart_remote_config/repository/remote_config_repository.dart';
 
 export 'fetcher/remote_config_fetcher.dart';
+export 'fetcher/s3_remote_config_fetcher.dart';
 export 'model/promo_code.dart';
 export 'model/remote_config.dart';
 export 'model/remote_config_response.dart';
