@@ -13,7 +13,7 @@ class ExperimentationModule {
   Future<ExperimentationEngineResult> compute(RemoteConfig config) async {
     final subscribedVariantIds = await _repository.readSubscribedVariantIds();
     final newResult = _engine.computeResult(config, subscribedVariantIds);
-    await _repository.saveSubscribedVariantsIds(newResult.subscribedVariantIds);
+    await _repository.saveSubscribedVariantsIds(newResult.computedVariantIds);
     return newResult;
   }
 }

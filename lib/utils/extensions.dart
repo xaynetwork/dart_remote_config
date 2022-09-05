@@ -42,8 +42,13 @@ extension ExperimentationEngineResultSuccessExtension
       )
       .toSet();
 
-  Set<KnownVariantId> get subscribedVariantIds =>
-      activeExperiments.map((it) => it.selectedVariantId).toSet();
+  Set<KnownVariantId> get computedVariantIds =>
+      computedExperiments.map((it) => it.selectedVariantId).toSet();
+
+  Set<KnownVariantId> get subscribedVariantIds => computedExperiments
+      .whereType<ExperimentResultSubscribed>()
+      .map((it) => it.selectedVariantId)
+      .toSet();
 }
 
 extension ExperimentResultExtension on ExperimentResult {
