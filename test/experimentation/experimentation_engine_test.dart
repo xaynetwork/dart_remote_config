@@ -324,6 +324,48 @@ void main() {
         {const Feature(id: 'feature')},
       );
     });
+
+    test(
+        'An experiment that is concluded but has two variants is selects one of those variants',
+        () async {
+      final repository = InMemoryRepository();
+      final state = await DartRemoteConfig(
+        fetcher: StringRemoteConfigFetcher(
+          """
+  - appVersion: ">3.46.0 <4.0.0"
+    features:
+      - feature:
+        id: feature
+    experiments:
+      - experiment:
+        id: experiment
+        size: 1.0
+        variants:
+         - id: a
+         - id: b
+  """,
+        ),
+        versionProvider: () => '3.50.0',
+        experimentationModuleFactory: () {
+          return ExperimentationModule(ExperimentationEngineImpl(), repository);
+        },
+      ).create();
+
+      expect(state, isA<DartRemoteConfigStateSuccess>());
+      expect(
+        (state as DartRemoteConfigStateSuccess).experiments.enabledFeatures,
+        isEmpty,
+      );
+      expect(
+        state.experiments.subscribedVariantIds,
+        anyOf(
+          {const KnownVariantId('experiment', 'a', 1.0)},
+          {const KnownVariantId('experiment', 'b', 1.0)},
+        ),
+      );
+    });
+
+    ///
   });
 
   group('concluded experiments with single variant and size = 1', () {

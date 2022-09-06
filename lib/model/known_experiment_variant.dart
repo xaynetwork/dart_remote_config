@@ -1,9 +1,10 @@
+import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'known_experiment_variant.g.dart';
 
 @JsonSerializable()
-class KnownVariantId {
+class KnownVariantId extends Equatable {
   final String experimentId;
   final String? variantId;
   final double size;
@@ -19,4 +20,7 @@ class KnownVariantId {
 
   @override
   String toString() => '$experimentId.$variantId:$size';
+
+  @override
+  List<Object?> get props => [experimentId, variantId, size];
 }
