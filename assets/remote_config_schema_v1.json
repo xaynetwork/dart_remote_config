@@ -89,8 +89,7 @@
     "variant": {
       "type": "object",
       "required": [
-        "id",
-        "featureIds"
+        "id"
       ],
       "properties": {
         "id": {
