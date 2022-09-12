@@ -1,4 +1,6 @@
 # q: $schema=../assets/remote_config_schema_v1.json
+# yaml-language-server: $schema=../assets/remote_config_schema_v1.json
+
 
 - appVersion: ">3.33.0 <4.0.0"
   promoCodes:
@@ -85,3 +87,17 @@
           ratio: 6
           featureIds:
             - button_light_color
+
+
+    # an non exclusive a/b experiment with two variants, where ther second variant does not have a feature
+    - experiment:
+      id: menu
+      enabled: true #default is true
+      exclusive: false
+      size: 0.2
+      variants:
+        - id: a
+          ratio: 4
+          featureIds:
+            - button_dark_color
+        - id: b # Empty feature is the control group
