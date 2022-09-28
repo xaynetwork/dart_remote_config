@@ -22,6 +22,7 @@ import '../remote_config_test.dart';
 void main() {
   const numTries = 1000;
   const error = numTries * 0.09;
+  final version = Version(3, 47, 0);
 
   group('Fetching remote config and passing it to experimentation engine', () {
     Future<RemoteConfig> getRemoteConfig() async {
@@ -36,7 +37,7 @@ void main() {
 
     test('Fetching a config and running a successful experiment', () async {
       final config = await getRemoteConfig();
-      final result = ExperimentationEngineImpl().computeResult(config);
+      final result = ExperimentationEngineImpl(version).computeResult(config);
       expect(result.computedExperiments.length, greaterThan(0));
     });
 
@@ -50,6 +51,8 @@ void main() {
       - experiment:
         id: experiment
         size: 0.4
+        filter:
+          appVersion: ">3.46.0"
         variants:
          - id: a
            featureIds:
@@ -65,8 +68,41 @@ void main() {
         success: (success) => success.remoteConfigs.configs.first,
       );
 
-      final result = ExperimentationEngineImpl().computeResult(config!);
+      final result = ExperimentationEngineImpl(version).computeResult(config!);
       expect(result.computedExperiments.length, greaterThan(0));
+    });
+
+    test(
+        'Experiment that is filtered but 100% rollout should not be subscribed',
+        () async {
+      const configString = """
+  - appVersion: ">3.46.0 <4.0.0"
+    features:
+      - feature:
+        id: feature
+    experiments:
+      - experiment:
+        id: experiment
+        filter:
+          appVersion: ">3.47.0"
+        size: 1.0
+        variants:
+         - id: a
+           featureIds:
+             - feature
+  """;
+
+      final parsedConfig =
+          await StringRemoteConfigFetcher(configString).fetch();
+
+      expect(parsedConfig, isA<RemoteConfigResponseSuccess>());
+
+      final config = parsedConfig.mapOrNull(
+        success: (success) => success.remoteConfigs.configs.first,
+      );
+
+      final result = ExperimentationEngineImpl(version).computeResult(config!);
+      expect(result.subscribedVariantIds, isEmpty);
     });
 
     test('Stay subscribed when the size does not change in a new fetch.',
@@ -93,8 +129,9 @@ void main() {
   """,
         ),
         versionProvider: () => '3.50.0',
-        experimentationModuleFactory: () {
-          return ExperimentationModule(ExperimentationEngineImpl(), repository);
+        experimentationModuleFactory: (v) {
+          return ExperimentationModule(
+              ExperimentationEngineImpl(v), repository);
         },
       ).create();
 
@@ -135,8 +172,9 @@ void main() {
   """,
         ),
         versionProvider: () => '3.50.0',
-        experimentationModuleFactory: () {
-          return ExperimentationModule(ExperimentationEngineImpl(), repository);
+        experimentationModuleFactory: (v) {
+          return ExperimentationModule(
+              ExperimentationEngineImpl(v), repository);
         },
       ).create();
 
@@ -177,8 +215,9 @@ void main() {
   """,
         ),
         versionProvider: () => '3.50.0',
-        experimentationModuleFactory: () {
-          return ExperimentationModule(ExperimentationEngineImpl(), repository);
+        experimentationModuleFactory: (v) {
+          return ExperimentationModule(
+              ExperimentationEngineImpl(v), repository);
         },
       ).create();
 
@@ -220,8 +259,9 @@ void main() {
   """,
         ),
         versionProvider: () => '3.50.0',
-        experimentationModuleFactory: () {
-          return ExperimentationModule(ExperimentationEngineImpl(), repository);
+        experimentationModuleFactory: (v) {
+          return ExperimentationModule(
+              ExperimentationEngineImpl(v), repository);
         },
       ).create();
 
@@ -264,8 +304,9 @@ void main() {
   """,
         ),
         versionProvider: () => '3.50.0',
-        experimentationModuleFactory: () {
-          return ExperimentationModule(ExperimentationEngineImpl(), repository);
+        experimentationModuleFactory: (v) {
+          return ExperimentationModule(
+              ExperimentationEngineImpl(v), repository);
         },
       ).create();
 
@@ -313,8 +354,9 @@ void main() {
   """,
         ),
         versionProvider: () => '3.50.0',
-        experimentationModuleFactory: () {
-          return ExperimentationModule(ExperimentationEngineImpl(), repository);
+        experimentationModuleFactory: (version) {
+          return ExperimentationModule(
+              ExperimentationEngineImpl(version), repository);
         },
       ).create();
 
@@ -346,8 +388,9 @@ void main() {
   """,
         ),
         versionProvider: () => '3.50.0',
-        experimentationModuleFactory: () {
-          return ExperimentationModule(ExperimentationEngineImpl(), repository);
+        experimentationModuleFactory: (v) {
+          return ExperimentationModule(
+              ExperimentationEngineImpl(v), repository);
         },
       ).create();
 
@@ -391,7 +434,8 @@ void main() {
 
       expect(fakeUniVariantExperiment.type, ExperimentType.concluded);
 
-      final result = ExperimentationEngineImpl().computeResult(fakeConfig);
+      final result =
+          ExperimentationEngineImpl(version).computeResult(fakeConfig);
       expect(result.activeExperiments.length, 0);
       expect(result.computedExperiments.length, 1);
       expect(result.featuresDefinedInConfig.length, 0);
@@ -439,7 +483,8 @@ void main() {
       expect(fakeUniVariantExperiment1.type, ExperimentType.concluded);
       expect(fakeUniVariantExperiment2.type, ExperimentType.concluded);
 
-      final result = ExperimentationEngineImpl().computeResult(fakeConfig);
+      final result =
+          ExperimentationEngineImpl(version).computeResult(fakeConfig);
       expect(result.activeExperiments.length, 0);
       expect(result.computedExperiments.length, 2);
       expect(result.featuresDefinedInConfig.length, 0);
@@ -492,7 +537,8 @@ void main() {
       expect(fakeUniVariantExperiment1.type, ExperimentType.concluded);
       expect(fakeUniVariantExperiment2.type, ExperimentType.concluded);
 
-      final result = ExperimentationEngineImpl().computeResult(fakeConfig);
+      final result =
+          ExperimentationEngineImpl(version).computeResult(fakeConfig);
       expect(result.activeExperiments.length, 0);
       expect(result.computedExperiments.length, 2);
       expect(result.featuresDefinedInConfig.length, 0);
@@ -552,7 +598,7 @@ void main() {
       expect(fakeUniVariantExperiment2.type, ExperimentType.concluded);
       expect(fakeUniVariantExperiment3.type, ExperimentType.concluded);
 
-      final result = ExperimentationEngineImpl().computeResult(
+      final result = ExperimentationEngineImpl(version).computeResult(
         fakeConfig,
       );
       expect(result.activeExperiments.length, 0);
@@ -603,7 +649,8 @@ void main() {
       var countUsersSubscribed = 0;
 
       for (int i = 0; i < numTries; i++) {
-        final result = ExperimentationEngineImpl().computeResult(fakeConfig);
+        final result =
+            ExperimentationEngineImpl(version).computeResult(fakeConfig);
         if (result.computedExperiments
             .whereType<ExperimentResultSubscribed>()
             .map((it) => it.experiment)
@@ -659,7 +706,8 @@ void main() {
       var subscribedUsersExperiment2 = 0;
 
       for (int i = 0; i < numTries; i++) {
-        final result = ExperimentationEngineImpl().computeResult(fakeConfig);
+        final result =
+            ExperimentationEngineImpl(version).computeResult(fakeConfig);
         final experiments = result.computedExperiments
             .whereType<ExperimentResultSubscribed>()
             .map((it) => it.experiment);
@@ -725,7 +773,8 @@ void main() {
       var subscribedUsersExperiment2 = 0;
 
       for (int i = 0; i < numTries; i++) {
-        final result = ExperimentationEngineImpl().computeResult(fakeConfig);
+        final result =
+            ExperimentationEngineImpl(version).computeResult(fakeConfig);
         final experiments = result.computedExperiments
             .whereType<ExperimentResultSubscribed>()
             .map((it) => it.experiment);
@@ -789,7 +838,8 @@ void main() {
       var countVariant2Subscribers = 0;
 
       for (int i = 0; i < numTries; i++) {
-        final result = ExperimentationEngineImpl().computeResult(fakeConfig);
+        final result =
+            ExperimentationEngineImpl(version).computeResult(fakeConfig);
         final experiments = result.computedExperiments
             .whereType<ExperimentResultSubscribed>()
             .map((it) => it.experiment);
@@ -912,7 +962,7 @@ void main() {
       var countInclusiveVariant2Subscribers = 0;
 
       for (int i = 0; i < numTries; i++) {
-        final result = ExperimentationEngineImpl().computeResult(
+        final result = ExperimentationEngineImpl(version).computeResult(
           fakeConfig,
           subscribedVariantIds,
         );
@@ -1054,7 +1104,7 @@ void main() {
       var countInclusiveExperimentComputed = 0;
 
       for (int i = 0; i < numTries; i++) {
-        final result = ExperimentationEngineImpl().computeResult(
+        final result = ExperimentationEngineImpl(version).computeResult(
           fakeConfig,
           subscribedVariantIds,
         );

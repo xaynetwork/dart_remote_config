@@ -26,6 +26,15 @@
         }
       ]
     },
+    "filterObject": {
+      "description": "A filter for the object. All conditions need to be met to be active.",
+      "type": "object",
+      "properties": {
+        "appVersion": {
+          "$ref": "#/definitions/versionConstraint"
+        }
+      }
+    },
     "featureValue": {
       "oneOf": [
         {
@@ -144,6 +153,9 @@
           },
           "minItems": 1,
           "uniqueItems": true
+        },
+        "filter": {
+          "$ref": "#/definitions/filterObject"
         }
       }
     }

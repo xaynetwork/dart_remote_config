@@ -12,8 +12,7 @@ part 'remote_config.g.dart';
 class RemoteConfigs {
   final List<RemoteConfig> configs;
 
-  RemoteConfig? findConfig(String versionString) {
-    final version = Version.parse(versionString);
+  RemoteConfig? findConfig(Version version) {
     return configs.firstWhereOrNull(
       (element) => element.appVersion.allows(version),
     );
