@@ -15,6 +15,9 @@ Experiment _$ExperimentFromJson(Map<String, dynamic> json) => Experiment(
           const [],
       enabled: json['enabled'] as bool? ?? true,
       exclusive: json['exclusive'] as bool? ?? true,
+      filter: json['filter'] == null
+          ? const Filter()
+          : Filter.fromJson(json['filter']),
     );
 
 Map<String, dynamic> _$ExperimentToJson(Experiment instance) =>
@@ -24,4 +27,5 @@ Map<String, dynamic> _$ExperimentToJson(Experiment instance) =>
       'exclusive': instance.exclusive,
       'variants': instance.variants,
       'size': _validRatio(instance.size),
+      'filter': instance.filter,
     };

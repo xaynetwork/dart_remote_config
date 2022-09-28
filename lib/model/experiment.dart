@@ -1,4 +1,5 @@
 import 'package:dart_remote_config/model/exceptions/remote_config_parser_exception.dart';
+import 'package:dart_remote_config/model/filter.dart';
 import 'package:dart_remote_config/model/known_experiment_variant.dart';
 import 'package:dart_remote_config/model/variant.dart';
 import 'package:equatable/equatable.dart';
@@ -47,6 +48,8 @@ class Experiment extends Equatable {
   @JsonKey(toJson: _validRatio, fromJson: _validRatio)
   final double size;
 
+  final Filter filter;
+
   ExperimentType get type => ExperimentType.fromExperimentSpecs(
         size: size,
         variantLength: variants.length,
@@ -60,6 +63,7 @@ class Experiment extends Equatable {
     this.variants = const [],
     this.enabled = true,
     this.exclusive = true,
+    this.filter = const Filter(),
   });
 
   factory Experiment.fromJson(dynamic json) {

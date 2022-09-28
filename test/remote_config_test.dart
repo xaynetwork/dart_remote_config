@@ -5,6 +5,7 @@ import 'package:dart_remote_config/model/promo_code.dart';
 import 'package:dart_remote_config/model/remote_config.dart';
 import 'package:dart_remote_config/model/remote_config_response.dart';
 import 'package:dart_remote_config/repository/remote_config_repository.dart';
+import 'package:pub_semver/pub_semver.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -21,7 +22,8 @@ void main() {
     final res = await FileRemoteConfigFetcher('test/valid_rconfig.yaml').fetch()
         as RemoteConfigResponseSuccess;
 
-    expect(res.remoteConfigs.findConfig('3.34.0'), isA<RemoteConfig>());
+    expect(res.remoteConfigs.findConfig(Version.parse('3.34.0')),
+        isA<RemoteConfig>());
   });
 
   test('A valid promo code will be returned when using the correct code.',
@@ -29,7 +31,7 @@ void main() {
     final res = await FileRemoteConfigFetcher('test/valid_rconfig.yaml').fetch()
         as RemoteConfigResponseSuccess;
 
-    final config = res.remoteConfigs.findConfig('3.34.0')!;
+    final config = res.remoteConfigs.findConfig(Version.parse('3.34.0'))!;
     expect(config.findValidPromoCode("WE NEED MORE CODES"), isA<PromoCode>());
   });
 
@@ -38,7 +40,7 @@ void main() {
     final res = await FileRemoteConfigFetcher('test/valid_rconfig.yaml').fetch()
         as RemoteConfigResponseSuccess;
 
-    final config = res.remoteConfigs.findConfig('3.34.0')!;
+    final config = res.remoteConfigs.findConfig(Version.parse('3.34.0'))!;
     expect(config.findValidPromoCode("TEST"), null);
   });
 
@@ -47,7 +49,7 @@ void main() {
     final res = await FileRemoteConfigFetcher('test/valid_rconfig.yaml').fetch()
         as RemoteConfigResponseSuccess;
 
-    final config = res.remoteConfigs.findConfig('3.34.0')!;
+    final config = res.remoteConfigs.findConfig(Version.parse('3.34.0'))!;
     expect(config.findValidPromoCode("TEST2"), null);
   });
 
