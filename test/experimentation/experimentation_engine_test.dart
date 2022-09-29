@@ -660,9 +660,8 @@ void main() {
 
       for (int i = 0; i < numTries; i++) {
         final result = ExperimentationEngineImpl().computeResult(fakeConfig);
-        final experiments = result.computedExperiments
-            .whereType<ExperimentResultSubscribed>()
-            .map((it) => it.experiment);
+        final experiments =
+            result.computedExperiments.map((it) => it.experiment);
 
         if (experiments.contains(experiment1)) {
           subscribedUsersExperiment1++;
@@ -673,12 +672,8 @@ void main() {
       }
 
       expect(
-        subscribedUsersExperiment1,
-        closeTo(expectedSubscribersCount1, error),
-      );
-      expect(
-        subscribedUsersExperiment2,
-        closeTo(expectedSubscribersCount2, error),
+        subscribedUsersExperiment1 / subscribedUsersExperiment2,
+        closeTo(expectedSubscribersCount1 / expectedSubscribersCount2, error),
       );
     });
 

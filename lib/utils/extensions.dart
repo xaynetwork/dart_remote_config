@@ -13,8 +13,7 @@ extension CollectionExtension<T> on Iterable<T> {
 }
 
 extension ExperimentResultSetExtestion on Set<ExperimentResult> {
-  bool get hasExclusive =>
-      any((it) => it is ExperimentResultSubscribed && it.experiment.exclusive);
+  bool get hasExclusive => any((it) => it.experiment.exclusive);
 }
 
 extension StringExtestion on String {
