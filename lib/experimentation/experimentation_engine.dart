@@ -63,15 +63,16 @@ class ExperimentationEngineImpl implements ExperimentationEngine {
         .map((it) => it.experimentId)
         .contains(experiment.id);
 
-    bool variantIsSubscribed(Variant variant) => subscribedVariantIds
-        .where((it) => it.isSubscribed)
-        .map((variantId) => variantId.variantId)
-        .contains(variant.id);
+    bool variantIsSubscribed(Experiment experiment, Variant variant) =>
+        subscribedVariantIds
+            .where((it) => it.isSubscribed)
+            .where((it) => it.experimentId == experiment.id)
+            .map((variantId) => variantId.variantId)
+            .contains(variant.id);
 
     ExperimentResult experimentToResult(Experiment experiment) {
       final selectedVariant = experiment.variants.firstWhereOrNull(
-        (variant) =>
-            experimentIsComputed(experiment) && variantIsSubscribed(variant),
+        (variant) => variantIsSubscribed(experiment, variant),
       );
 
       return selectedVariant != null

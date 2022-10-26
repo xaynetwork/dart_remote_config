@@ -365,7 +365,78 @@ void main() {
       );
     });
 
-    ///
+    test(
+        'Subscribe to a single experiment from a list of exclusive experiments',
+        () async {
+      final repository = InMemoryRepository();
+      final state = await DartRemoteConfig(
+        fetcher: StringRemoteConfigFetcher(
+          """
+  - appVersion: ">3.46.0 <4.0.0"
+    features:
+      - feature:
+        id: onboarding_sheets  
+      - feature:
+        id: country_selection_inline_card
+      - feature:
+        id: source_selection_inline_card
+      - feature:
+        id: test_concluded_feature
+
+    experiments:
+      - experiment:
+        id: onboarding_sheets_rollout
+        size: 0.25
+        exclusive: true
+        variants:
+          - id: a
+            featureIds:
+              - onboarding_sheets
+  
+      - experiment:
+        id: Sources_Prompt
+        size: 0.25
+        exclusive: true
+        variants:
+          - id: a
+            featureIds:
+              - source_selection_inline_card
+  
+      - experiment:
+        id: Countries_Prompt
+        size: 0.5
+        exclusive: true
+        variants:
+          - id: a
+            featureIds:
+              - country_selection_inline_card
+
+      - experiment:
+        id: test_concluded_experiment
+        exclusive: false
+        size: 1.0
+        variants:
+          - id: a
+            featureIds:
+              - test_concluded_feature
+  """,
+        ),
+        versionProvider: () => '3.50.0',
+        experimentationModuleFactory: () {
+          return ExperimentationModule(ExperimentationEngineImpl(), repository);
+        },
+      ).create();
+
+      expect(state, isA<DartRemoteConfigStateSuccess>());
+
+      expect(
+        (state as DartRemoteConfigStateSuccess)
+            .experiments
+            .subscribedVariantIds
+            .length,
+        equals(2),
+      );
+    });
   });
 
   group('concluded experiments with single variant and size = 1', () {
